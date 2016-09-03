@@ -1,0 +1,5 @@
+--recursive
+--reporter spec
+--slow 1000
+--timeout 10000
+--require test/setup
