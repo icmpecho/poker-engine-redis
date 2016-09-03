@@ -22,4 +22,23 @@ describe('Deck', function () {
     })
 
   })
+
+  describe('#draw', function () {
+
+    it('returns top card', function () {
+      const deck = new Deck()
+      const topCard = deck.cards[deck.count - 1]
+      const result = deck.draw()
+      assert.deepEqual(result, topCard)
+    })
+
+    it('removes top card', function () {
+      const deck = new Deck()
+      const originalCount = deck.count
+      deck.draw()
+      assert.equal(deck.count, originalCount - 1)
+    })
+
+  })
+
 })
