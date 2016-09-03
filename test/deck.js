@@ -1,4 +1,4 @@
-const { Deck } = require('../lib/deck')
+const Deck = require('../lib/deck')
 
 describe('Deck', function () {
 
