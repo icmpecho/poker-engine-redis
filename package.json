@@ -1,13 +1,13 @@
 {
-  "name": "poker-engine-js",
-  "version": "1.0.0",
+  "name": "poker-engine-redis",
+  "version": "0.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "mocha"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Pinnapong Silpsakulsuk",
+  "license": "MIT",
   "dependencies": {
     "bluebird": "^3.4.6",
     "co": "^4.6.0",
