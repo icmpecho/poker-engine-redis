@@ -96,15 +96,4 @@ describe('Deck', function () {
     })
   })
 
-  describe('#delete', function () {
-
-    it('delete deck data from redis', function* () {
-      const deck = new Deck(client, 'my-key')
-      yield deck.load()
-      yield deck.delete()
-      const redisResult = yield client.getAsync('my-key:cards')
-      assert.equal(redisResult, null)
-    })
-  })
-
 })
