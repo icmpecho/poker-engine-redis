@@ -51,6 +51,25 @@ describe('Pile', function () {
 
   })
 
+  describe('#add', function () {
+    let pile
+    beforeEach(function* () {
+      pile = new Pile(client, 'my-key')
+      yield pile.load()
+      yield pile.add(new Card('2C'))
+    })
+
+    it('add card to the pile', function* () {
+      assert.deepEqual(pile.cards[0], new Card('2C'))
+    })
+
+    it('save changes to redis', function* () {
+      const newPile = new Pile(client, 'my-key')
+      yield newPile.load()
+      assert.lengthOf(newPile.cards, 1)
+    })
+  })
+
   describe('#draw', function () {
     let pile, card
     beforeEach(function* () {
@@ -59,6 +78,7 @@ describe('Pile', function () {
       pile.cards.push(new Card('2C'))
       pile.cards.push(new Card('3C'))
       pile.cards.push(new Card('4C'))
+      yield pile.save()
       card = yield pile.draw()
     })
 
