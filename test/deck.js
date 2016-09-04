@@ -10,59 +10,42 @@ describe('Deck', function () {
 
   describe('#load', function () {
 
-    describe('without key', function () {
+    describe('new key', function () {
       let deck
       beforeEach(function* () {
-        deck = new Deck(client)
+        deck = new Deck(client, 'my-key')
+        yield deck.load()
       })
 
-      it('automatically generate key', function* () {
-        assert.equal(deck.key, null)
-        yield deck.load()
-        assert.notEqual(deck.key, null)
+      it('create redis record of cards with the key', function* () {
+        const redisResult = yield client.getAsync('my-key:cards')
+        assert.notEqual(redisResult, null)
+      })
+
+      it('initials 52 cards', function () {
+        assert.lengthOf(deck.cards, 52)
       })
     })
 
-    describe('with key', function () {
-
-      describe('new key', function () {
-        let deck
-        beforeEach(function* () {
-          deck = new Deck(client, 'my-key')
-          yield deck.load()
-        })
-
-        it('create redis record of cards with the key', function* () {
-          const redisResult = yield client.getAsync('my-key:cards')
-          assert.notEqual(redisResult, null)
-        })
-
-        it('initials 52 cards', function () {
-          assert.lengthOf(deck.cards, 52)
-        })
+    describe('existing key', function () {
+      let deck, existingDeck
+      beforeEach(function* () {
+        existingDeck = new Deck(client, 'my-key')
+        yield existingDeck.load()
+        yield existingDeck.draw()
+        deck = new Deck(client, 'my-key')
+        yield deck.load()
       })
 
-      describe('existing key', function () {
-        let deck, existingDeck
-        beforeEach(function* () {
-          existingDeck = new Deck(client, 'my-key')
-          yield existingDeck.load()
-          yield existingDeck.draw()
-          deck = new Deck(client, 'my-key')
-          yield deck.load()
-        })
-
-        it('returns existing deck', function* () {
-          assert.lengthOf(deck.cards, 51)
-        })
-
-        it('reload cards from serialized data', function* () {
-          deck.cards.forEach((card) => {
-            assert.instanceOf(card, Card)
-          })
-        })
+      it('returns existing deck', function* () {
+        assert.lengthOf(deck.cards, 51)
       })
 
+      it('reload cards from serialized data', function* () {
+        deck.cards.forEach((card) => {
+          assert.instanceOf(card, Card)
+        })
+      })
     })
 
   })
