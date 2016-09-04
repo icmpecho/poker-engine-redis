@@ -1,44 +1,116 @@
 const Deck = require('../lib/deck')
+const Card = require('../lib/card')
+
 
 describe('Deck', function () {
 
-  describe('#constructor', function () {
-
-    it('initials 52 cards', function () {
-      const deck = new Deck()
-      assert.equal(deck.count, 52)
-    })
-
+  beforeEach(function* () {
+    yield client.send_commandAsync('FLUSHDB')
   })
 
-  describe('#shuffle', function () {
+  describe('#load', function () {
 
-    it('change card order', function () {
-      const deck = new Deck()
-      const newDeck = new Deck()
-      assert.deepEqual(deck, newDeck)
-      deck.shuffle()
-      assert.notDeepEqual(deck, newDeck)
+    describe('without key', function () {
+      let deck
+      beforeEach(function* () {
+        deck = new Deck(client)
+      })
+
+      it('automatically generate key', function* () {
+        assert.equal(deck.key, null)
+        yield deck.load()
+        assert.notEqual(deck.key, null)
+      })
+    })
+
+    describe('with key', function () {
+
+      describe('new key', function () {
+        let deck
+        beforeEach(function* () {
+          deck = new Deck(client, 'my-key')
+          yield deck.load()
+        })
+
+        it('create redis record of cards with the key', function* () {
+          const redisResult = yield client.getAsync('my-key:cards')
+          assert.notEqual(redisResult, null)
+        })
+
+        it('initials 52 cards', function () {
+          assert.lengthOf(deck.cards, 52)
+        })
+      })
+
+      describe('existing key', function () {
+        let deck, existingDeck
+        beforeEach(function* () {
+          existingDeck = new Deck(client, 'my-key')
+          yield existingDeck.load()
+          yield existingDeck.draw()
+          deck = new Deck(client, 'my-key')
+          yield deck.load()
+        })
+
+        it('returns existing deck', function* () {
+          assert.lengthOf(deck.cards, 51)
+        })
+
+        it('reload cards from serialized data', function* () {
+          deck.cards.forEach((card) => {
+            assert.instanceOf(card, Card)
+          })
+        })
+      })
+
     })
 
   })
 
   describe('#draw', function () {
-
-    it('returns top card', function () {
-      const deck = new Deck()
-      const topCard = deck.cards[deck.count - 1]
-      const result = deck.draw()
-      assert.deepEqual(result, topCard)
+    let deck, card, topCard
+    beforeEach(function* () {
+      deck = new Deck(client, 'my-key')
+      yield deck.load()
+      topCard = deck.cards[deck.cards.length - 1]
+      card = yield deck.draw()
     })
 
-    it('removes top card', function () {
-      const deck = new Deck()
-      const originalCount = deck.count
-      deck.draw()
-      assert.equal(deck.count, originalCount - 1)
+    it('returns top card', function* () {
+      assert.deepEqual(card, topCard)
     })
 
+    it('reduce remove top card from the deck', function* () {
+      assert.lengthOf(deck.cards, 51)
+    })
+
+    it('save changes to redis', function* () {
+      const newDeck = new Deck(client, 'my-key')
+      yield newDeck.load()
+      assert.lengthOf(newDeck.cards, 51)
+    })
+  })
+
+  describe('#shuffle', function () {
+    let deck, unshuffledDeck
+    beforeEach(function* () {
+      deck = new Deck(client, 'my-key')
+      yield deck.load()
+      unshuffledDeck = new Deck(client, 'another-key')
+      yield unshuffledDeck.load()
+      assert.deepEqual(deck.cards, unshuffledDeck.cards)
+      yield deck.shuffle()
+    })
+
+    it('change cards order', function* () {
+      assert.notDeepEqual(deck.cards, unshuffledDeck.cards)
+    })
+
+    it('save changes to redis', function* () {
+      const newDeck = new Deck(client, 'my-key')
+      yield newDeck.load()
+      assert.deepEqual(newDeck.cards, deck.cards)
+    })
   })
 
 })
