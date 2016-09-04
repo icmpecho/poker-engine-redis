@@ -5,7 +5,7 @@ const Card = require('../lib/card')
 describe('Deck', function () {
 
   beforeEach(function* () {
-    yield client.send_commandAsync('FLUSHDB')
+    yield client.flushdbAsync()
   })
 
   describe('#load', function () {
@@ -110,6 +110,17 @@ describe('Deck', function () {
       const newDeck = new Deck(client, 'my-key')
       yield newDeck.load()
       assert.deepEqual(newDeck.cards, deck.cards)
+    })
+  })
+
+  describe('#delete', function () {
+
+    it('delete deck data from redis', function* () {
+      const deck = new Deck(client, 'my-key')
+      yield deck.load()
+      yield deck.delete()
+      const redisResult = yield client.getAsync('my-key:cards')
+      assert.equal(redisResult, null)
     })
   })
 
