@@ -20,6 +20,10 @@ describe('Player', function () {
       it('initialize an empty hand', function () {
         assert.deepEqual(player.hand.cards, [])
       })
+
+      it('intialize credits to default value', function () {
+        assert.equal(player.credits, 20)
+      })
     })
 
     describe('existing key', function () {
@@ -29,6 +33,7 @@ describe('Player', function () {
           const oldPlayer = new Player(client, 'existing-key')
           await oldPlayer.load()
           oldPlayer.hand.add(new Card('AS'))
+          oldPlayer.credits = 10
           await oldPlayer.save()
           player = new Player(client, 'existing-key')
           await player.load()
@@ -37,6 +42,10 @@ describe('Player', function () {
 
       it('load existing player hand', function () {
         assert.lengthOf(player.hand.cards, 1)
+      })
+
+      it('load existing player credits', function () {
+        assert.equal(player.credits, 10)
       })
     })
   })
