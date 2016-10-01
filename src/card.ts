@@ -1,21 +1,35 @@
-const _ = require('lodash')
+import * as _ from 'lodash';
 
 class Card {
 
-  constructor(string) {
-    this.suit = string[1]
-    this.value = string[0]
+  static Suits = {
+    spade: 'S',
+    heart: 'H',
+    diamond: 'D',
+    club: 'C',
   }
 
-  toString() {
+  static Values = [
+    '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A',
+  ]
+
+  suit: string
+  value: string
+
+  constructor(code: string) {
+    this.suit = code[1]
+    this.value = code[0]
+  }
+
+  toString(): string {
     return this.value + this._unicodeSuit(this.suit)
   }
 
-  toJSON() {
+  toJSON(): string {
     return this.value + this.suit
   }
 
-  _unicodeSuit(suit) {
+  _unicodeSuit(suit: string): string {
     switch(suit) {
       case Card.Suits.spade:
         return '♠'
@@ -31,7 +45,7 @@ class Card {
   }
 
   static get all() {
-    let cards = []
+    let cards: Card[] = []
     _.forEach(Card.Suits, (suit) => {
       _.forEach(Card.Values, (value) => {
         cards.push(new Card(value + suit))
@@ -42,15 +56,4 @@ class Card {
 
 }
 
-Card.Suits = {
-  spade: 'S',
-  heart: 'H',
-  diamond: 'D',
-  club: 'C',
-}
-
-Card.Values = [
-  '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A',
-]
-
-module.exports = Card
+export { Card }

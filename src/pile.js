@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const asyncClass = require('simple-async-class')
 const Promise = require('bluebird')
-const Card = require('./card')
+const {Card} = require('./card')
 const RedisObject = require('./redis-object')
 
 class Pile extends RedisObject {

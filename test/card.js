@@ -1,4 +1,4 @@
-const Card = require('../src/card')
+const {Card} = require('../src/card')
 
 describe('Card', function () {
 
