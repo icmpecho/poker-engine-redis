@@ -54,6 +54,36 @@ describe('Game', function () {
     })
   })
 
+  describe('#reset', function () {
+    let game: Game
+    beforeEach(function () {
+      return async function () {
+        const oldGame = new Game(client, 'existing-key')
+        await oldGame.load()
+        oldGame.init()
+        oldGame.deck.shuffle()
+        oldGame.deck.draw()
+        await oldGame.save()
+        game = new Game(client, 'existing-key')
+        await game.reset()
+      }()
+    })
+
+    it('remove all data related to the key from redis', function () {
+      return async function () {
+        const deck = await client.getAsync('existing-key:deck:cards')
+        assert.isNull(deck)
+        const state = await client.getAsync('existing-key:_state')
+        assert.isNull(state)
+      }()
+    })
+
+    it('set the game object to default state', function () {
+      assert.lengthOf(game.deck.cards, 52)
+      assert.equal(game.state, 'idle')
+    })
+  })
+
   describe('#init', function () {
     let game: Game
     beforeEach(function() {

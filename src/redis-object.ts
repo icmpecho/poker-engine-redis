@@ -13,14 +13,16 @@ interface PromisifyRedis extends RedisClient {
   setAsync(key: string, value: string): Bluebird<string>
   getAsync(key: string): Bluebird<string>
   flushdbAsync(): Bluebird<any>
+  delAsync(keys: string[]): Bluebird<any>
+  keysAsync(pattern: string): Bluebird<string[]>
 }
 
 class RedisObject {
   [attrName: string]: any
-  private client: PromisifyRedis
+  client: PromisifyRedis
 
   constructor(client: RedisClient, private key: string) {
-     this.client = <PromisifyRedis>Bluebird.promisifyAll(client);
+    this.client = <PromisifyRedis>Bluebird.promisifyAll(client);
   }
 
   propertyKey(name: string) {

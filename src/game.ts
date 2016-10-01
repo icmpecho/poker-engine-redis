@@ -31,6 +31,12 @@ class Game extends RedisObject {
     this._state = State.starting
   }
 
+  async reset() {
+    const keys = await this.client.keysAsync(`${this._key}:*`)
+    await this.client.delAsync(keys)
+    await this.load()
+  }
+
   async load() {
     await this.deck.load()
     await this.loadProperty('_state', State.idle, parseInt)
