@@ -1,4 +1,4 @@
-const {Card} = require('../src/card')
+import { Card } from '../src/card'
 
 describe('Card', function () {
 
