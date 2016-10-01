@@ -16,18 +16,17 @@
     "@types/lodash": "^4.14.36",
     "@types/redis": "^0.12.32",
     "bluebird": "^3.4.6",
-    "co": "^4.6.0",
     "lodash": "^4.15.0",
     "node-uuid": "^1.4.7",
     "redis": "^2.6.2",
-    "simple-async-class": "^0.1.1",
     "typescript": "^2.0.3"
   },
   "devDependencies": {
     "@types/chai": "^3.4.34",
+    "@types/chai-as-promised": "0.0.29",
     "@types/mocha": "^2.2.32",
     "chai": "^3.5.0",
-    "co-mocha": "^1.1.3",
+    "chai-as-promised": "^6.0.0",
     "mocha": "^3.0.2"
   }
 }

@@ -10,8 +10,9 @@ interface Parser {
 }
 
 interface PromisifyRedis extends RedisClient {
-  setAsync: (key: string, value: string) => Bluebird<string>
-  getAsync: (key: string) => Bluebird<string>
+  setAsync(key: string, value: string): Bluebird<string>
+  getAsync(key: string): Bluebird<string>
+  flushdbAsync(): Bluebird<any>
 }
 
 class RedisObject {
@@ -40,4 +41,4 @@ class RedisObject {
   }
 }
 
-export { RedisObject }
+export { RedisObject, PromisifyRedis }

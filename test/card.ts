@@ -1,3 +1,4 @@
+import { assert } from 'chai'
 import { Card } from '../src/card'
 
 describe('Card', function () {

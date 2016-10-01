@@ -5,7 +5,7 @@ import { RedisObject } from './redis-object'
 
 class Pile extends RedisObject {
 
-  private cards: Card[];
+  cards: Card[];
 
   constructor(
     redisClient: RedisClient, key: string, private defaultCards: Card[] = []

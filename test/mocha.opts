@@ -2,5 +2,3 @@
 --reporter spec
 --slow 1000
 --timeout 10000
---require co-mocha
---require dist/test/setup
