@@ -13,8 +13,8 @@ class Card {
     '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A',
   ]
 
-  suit: string
-  value: string
+  private suit: string
+  private value: string
 
   constructor(code: string) {
     this.suit = code[1]
