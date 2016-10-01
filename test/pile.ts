@@ -107,13 +107,12 @@ describe('Pile', function () {
   })
 
   describe('#shuffle', function () {
-    let pile: Pile, cards = [new Card('2C'), new Card('3C'), new Card('4C')]
+    let pile: Pile, cards: Card[]
     beforeEach(function () {
       return async function () {
-        pile = new Pile(client, 'my-key')
+        cards = Card.all
+        pile = new Pile(client, 'my-key', cards)
         await pile.load()
-        cards.forEach(c => pile.cards.push(c))
-        await pile.save()
         assert.deepEqual(pile.cards, cards)
         await pile.shuffle()
       }()
