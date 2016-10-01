@@ -1,5 +1,5 @@
-const Pile = require('../lib/pile')
-const Card = require('../lib/card')
+const Pile = require('../src/pile')
+const Card = require('../src/card')
 
 
 describe('Deck', function () {

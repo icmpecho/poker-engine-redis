@@ -3,4 +3,4 @@
 --slow 1000
 --timeout 10000
 --require co-mocha
---require test/setup
+--require dist/test/setup
