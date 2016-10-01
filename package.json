@@ -12,7 +12,9 @@
   "author": "Pinnapong Silpsakulsuk",
   "license": "MIT",
   "dependencies": {
+    "@types/bluebird": "^3.0.33",
     "@types/lodash": "^4.14.36",
+    "@types/redis": "^0.12.32",
     "bluebird": "^3.4.6",
     "co": "^4.6.0",
     "lodash": "^4.15.0",

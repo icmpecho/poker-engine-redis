@@ -1,4 +1,4 @@
-const Pile = require('../src/pile')
+const {Pile} = require('../src/pile')
 const {Card} = require('../src/card')
 
 
