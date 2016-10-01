@@ -13,8 +13,11 @@ describe('Pile', function () {
     describe('new key', function () {
       let pile: Pile
       beforeEach(function() {
-        pile = new Pile(client, 'my-key')
-        return pile.load()
+        return async function () {
+          pile = new Pile(client, 'my-key')
+          await pile.load()
+          await pile.save()
+        }()
       })
 
       it('create redis record of cards with the key', function () {
@@ -58,20 +61,12 @@ describe('Pile', function () {
       return async function () {
         pile = new Pile(client, 'my-key')
         await pile.load()
-        await pile.add(new Card('2C'))
+        pile.add(new Card('2C'))
       }()
     })
 
     it('add card to the pile', function () {
       assert.deepEqual(pile.cards[0], new Card('2C'))
-    })
-
-    it('save changes to redis', function () {
-      return async function () {
-        const newPile = new Pile(client, 'my-key')
-        await newPile.load()
-        assert.lengthOf(newPile.cards, 1)
-      }()
     })
   })
 
@@ -85,7 +80,7 @@ describe('Pile', function () {
         pile.cards.push(new Card('3C'))
         pile.cards.push(new Card('4C'))
         await pile.save()
-        card = await pile.draw()
+        card = pile.draw()
       }()
     })
 
@@ -95,14 +90,6 @@ describe('Pile', function () {
 
     it('reduce remove top card from the pile', function () {
       assert.lengthOf(pile.cards, 2)
-    })
-
-    it('save changes to redis', function () {
-      return async function () {
-        const newPile = new Pile(client, 'my-key')
-        await newPile.load()
-        assert.lengthOf(newPile.cards, 2)
-      }()
     })
   })
 
@@ -114,20 +101,12 @@ describe('Pile', function () {
         pile = new Pile(client, 'my-key', cards)
         await pile.load()
         assert.deepEqual(pile.cards, cards)
-        await pile.shuffle()
+        pile.shuffle()
       }()
     })
 
     it('change cards order', function () {
       assert.notDeepEqual(pile.cards, cards)
-    })
-
-    it('save changes to redis', function () {
-      return async function() {
-        const newPile = new Pile(client, 'my-key')
-        await newPile.load()
-        assert.deepEqual(newPile.cards, pile.cards)
-      }()
     })
   })
 

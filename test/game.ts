@@ -31,8 +31,8 @@ describe('Game', function () {
         return async function () {
           const oldGame = new Game(client, 'existing-key')
           await oldGame.load()
-          await oldGame.deck.shuffle()
-          await oldGame.deck.draw()
+          oldGame.deck.shuffle()
+          oldGame.deck.draw()
           await oldGame.save()
           game = new Game(client, 'existing-key')
           await game.load()

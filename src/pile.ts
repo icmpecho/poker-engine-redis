@@ -19,19 +19,16 @@ class Pile extends RedisObject {
     return this.cards.length;
   }
 
-  async add(card: Card) {
+  add(card: Card) {
     this.cards.push(card)
-    await this.save()
   }
 
-  async shuffle() {
+  shuffle() {
     this.cards = _.shuffle(this.cards)
-    await this.save()
   }
 
-  async draw() {
+  draw() {
     const card = this.cards.pop()
-    await this.save()
     return card
   }
 
@@ -41,7 +38,6 @@ class Pile extends RedisObject {
 
   async load() {
     await this.loadProperty('cards', this.defaultCards, this._parseCards)
-    await this.save()
   }
 
   _parseCards(cardsJSON: string) {
