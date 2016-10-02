@@ -266,6 +266,11 @@ describe('Game', function () {
         game.start()
         assert.equal(game.buttonPosition, 0)
       })
+
+      it('throw exception if game is already started', function () {
+        game.start()
+        assert.throw(() => game.start())
+      })
     })
   })
 })
