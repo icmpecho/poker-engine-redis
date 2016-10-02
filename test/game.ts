@@ -165,4 +165,27 @@ describe('Game', function () {
       }()
     })
   })
+
+  describe('#getPlayer', function () {
+    let game: Game
+    beforeEach(function () {
+      return async function () {
+        game = new Game(client, 'my-key')
+        await game.load()
+        game.init()
+        await game.addPlayer('aaa')
+        await game.addPlayer('bbb')
+      }()
+    })
+
+    it('return player with the given id', function () {
+      const player = game.getPlayer('aaa')
+      assert.equal(player.key, 'my-key:players:aaa')
+    })
+
+    it('return undefined if no player with the given key', function () {
+      const player = game.getPlayer('ccc')
+      assert.isUndefined(player)
+    })
+  })
 })

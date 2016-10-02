@@ -36,11 +36,17 @@ class Game extends RedisObject {
     this._state = State.starting
   }
 
-  start(): void {
-    if (this._state != State.starting) {
-      throw new Error(`Game ${this.key} is not ready to start.`)
-    }
-    this._state = State.ongoing
+  // start(): void {
+  //   if (this._state != State.starting) {
+  //     throw new Error(`Game ${this.key} is not ready to start.`)
+  //   }
+  //   this._state = State.ongoing
+  //   this.newRound()
+  // }
+
+  getPlayer(playerId: string): Player {
+    const playerKey = `${this.key}:players:${playerId}`
+    return _.find(this.players, ['key', playerKey])
   }
 
   async addPlayer(playerId: string) {
@@ -85,6 +91,7 @@ class Game extends RedisObject {
 
   // private newRound(): void {
   //   this.deck.restoreDefault()
+  //   this.sharedCards.restoreDefault()
   //   this.deck.shuffle()
   //   this.players.forEach(p => {
   //     p.hand.restoreDefault()
