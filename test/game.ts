@@ -37,7 +37,7 @@ describe('Game', function () {
       })
 
       it('has null as starting position', function () {
-        assert.equal(game.startingPosition, null)
+        assert.equal(game.buttonPosition, null)
       })
       
       it('has null as current position', function () {
@@ -55,7 +55,7 @@ describe('Game', function () {
           oldGame.deck.shuffle()
           const card = oldGame.deck.draw()
           oldGame.sharedCards.add(card)
-          oldGame.startingPosition = 1
+          oldGame.buttonPosition = 1
           oldGame.currentPosition = 0
           await oldGame.addPlayer('aaa')
           await oldGame.addPlayer('bbb')
@@ -92,7 +92,7 @@ describe('Game', function () {
       })
 
       it('load existing startingPosition', function () {
-        assert.equal(game.startingPosition, 1)
+        assert.equal(game.buttonPosition, 1)
       })
 
       it('load existing currentPosition', function () {

@@ -18,7 +18,7 @@ class Game extends RedisObject {
   deck: Pile
   players: Player[]
   sharedCards: Pile
-  startingPosition: number
+  buttonPosition: number
   currentPosition: number
   private _state: State
   constructor(client: RedisClient, key: string, public defaultCredits = 20) {
@@ -46,7 +46,7 @@ class Game extends RedisObject {
     this.deck.restoreDefault()
     this.sharedCards.restoreDefault()
     this.deck.shuffle()
-    this.nextStartingPosition()
+    this.nextButtonPosition()
     this.players.forEach(p => {
       p.hand.restoreDefault()
       this.dealCard(p.hand, 2)
@@ -83,7 +83,7 @@ class Game extends RedisObject {
     await this.sharedCards.load()
     await this.loadProperty('_state', State.idle, parseInt)
     await this.loadPlayers()
-    await this.loadProperty('startingPosition', null, JSON.parse)
+    await this.loadProperty('buttonPosition', null, JSON.parse)
     await this.loadProperty('currentPosition', null, JSON.parse)
   }
 
@@ -92,7 +92,7 @@ class Game extends RedisObject {
     await this.sharedCards.save()
     await this.saveProperty('_state')
     await Bluebird.map(this.players, p => p.save())
-    await this.saveProperty('startingPosition')
+    await this.saveProperty('buttonPosition')
     await this.saveProperty('currentPosition')
   }
 
@@ -113,20 +113,20 @@ class Game extends RedisObject {
     _.times(count, () => target.add(card)) 
   }
 
-  private _nextStartingPosition(): void {
-    if (_.isNil(this.startingPosition)) {
-      this.startingPosition = 0
+  private _nextButtonPosition(): void {
+    if (_.isNil(this.buttonPosition)) {
+      this.buttonPosition = 0
     }
-    this.startingPosition += 1
-    if (this.startingPosition >= this.players.length) {
-      this.startingPosition = 0
+    this.buttonPosition += 1
+    if (this.buttonPosition >= this.players.length) {
+      this.buttonPosition = 0
     }
   }
 
-  private nextStartingPosition(): void {
-    this._nextStartingPosition()
-    while(this.players[this.startingPosition].credits <= 0) {
-      this._nextStartingPosition()
+  private nextButtonPosition(): void {
+    this._nextButtonPosition()
+    while(this.players[this.buttonPosition].credits <= 0) {
+      this._nextButtonPosition()
     }
   }
 }
