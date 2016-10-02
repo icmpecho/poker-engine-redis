@@ -9,7 +9,7 @@ import { Player } from './player'
 enum State {
   idle,
   preparing,
-  ongoing,
+  preflop,
   endOfRound,
   end
 }
@@ -62,7 +62,7 @@ class Game extends RedisObject {
     this.players[this.smallBlindPosition].bet(1)
     this.players[this.bigBlindPosition].bet(2)
     this.currentPosition = this.nextPosition(this.bigBlindPosition)
-    this._state = State.ongoing
+    this._state = State.preflop
   }
 
   getPlayer(playerId: string): Player {

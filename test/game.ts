@@ -241,7 +241,7 @@ describe('Game', function () {
 
       it('change game state to ongoing', function () {
         game.start()
-        assert.equal(game.state, 'ongoing')
+        assert.equal(game.state, 'preflop')
       })
 
       it('deal 2 cards to all players', function () {
