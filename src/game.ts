@@ -16,10 +16,12 @@ enum State {
 class Game extends RedisObject {
   deck: Pile
   players: Player[]
+  sharedCards: Pile
   private _state: State
   constructor(client: RedisClient, key: string, public defaultCredits = 20) {
     super(client, key)
     this.deck = new Pile(client, `${key}:deck`, Card.all)
+    this.sharedCards = new Pile(client, `${key}:sharedCards`)
     this.players = []
   }
 
@@ -32,6 +34,13 @@ class Game extends RedisObject {
       throw new Error(`Game ${this.key} is already in ${State[this._state]} state.`)
     }
     this._state = State.starting
+  }
+
+  start(): void {
+    if (this._state != State.starting) {
+      throw new Error(`Game ${this.key} is not ready to start.`)
+    }
+    this._state = State.ongoing
   }
 
   async addPlayer(playerId: string) {
@@ -55,12 +64,14 @@ class Game extends RedisObject {
 
   async load() {
     await this.deck.load()
+    await this.sharedCards.load()
     await this.loadProperty('_state', State.idle, parseInt)
     await this.loadPlayers()
   }
 
   async save() {
     await this.deck.save()
+    await this.sharedCards.save()
     await this.saveProperty('_state')
     await Bluebird.map(this.players, p => p.save())
   }
@@ -71,6 +82,20 @@ class Game extends RedisObject {
     this.players = playerKeys.map(key => new Player(this.client, key, this.defaultCredits))
     await Bluebird.map(this.players, p => p.load())
   }
+
+  // private newRound(): void {
+  //   this.deck.restoreDefault()
+  //   this.deck.shuffle()
+  //   this.players.forEach(p => {
+  //     p.hand.restoreDefault()
+  //     this.dealCard(p.hand, 2)
+  //   })
+  // }
+
+  // private dealCard(target: Pile, count: number) {
+  //   const card = this.deck.draw()
+  //   _.times(count, () => target.add(card)) 
+  // }
 }
 
 export { Game }

@@ -31,6 +31,10 @@ describe('Game', function () {
       it('has no players', function () {
         assert.lengthOf(game.players, 0)
       })
+
+      it('has empty shared cards', function () {
+        assert.lengthOf(game.sharedCards.cards, 0)
+      })
     })
 
     describe('existing key', function () {
@@ -41,7 +45,8 @@ describe('Game', function () {
           await oldGame.load()
           oldGame.init()
           oldGame.deck.shuffle()
-          oldGame.deck.draw()
+          const card = oldGame.deck.draw()
+          oldGame.sharedCards.add(card)
           await oldGame.addPlayer('aaa')
           await oldGame.addPlayer('bbb')
           oldGame.players[0].bet(10)
@@ -65,6 +70,10 @@ describe('Game', function () {
         assert.equal(game.players[0].currentBet, 10)
         assert.equal(game.players[0].credits, 10)
       })
+
+      it('load existing shared cards', function () {
+        assert.lengthOf(game.sharedCards.cards, 1)
+      })
     })
   })
 
@@ -76,7 +85,11 @@ describe('Game', function () {
         await oldGame.load()
         oldGame.init()
         oldGame.deck.shuffle()
-        oldGame.deck.draw()
+        const card = oldGame.deck.draw()
+        oldGame.sharedCards.add(card)
+        await oldGame.addPlayer('aaa')
+        await oldGame.addPlayer('bbb')
+        oldGame.players[0].bet(10)
         await oldGame.save()
         game = new Game(client, 'existing-key')
         await game.reset()
@@ -96,6 +109,7 @@ describe('Game', function () {
       assert.lengthOf(game.deck.cards, 52)
       assert.equal(game.state, 'idle')
       assert.lengthOf(game.players, 0)
+      assert.lengthOf(game.sharedCards.cards, 0)
     })
   })
 
