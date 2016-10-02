@@ -233,6 +233,9 @@ describe('Game', function () {
           await game.addPlayer('aaa')
           await game.addPlayer('bbb')
           await game.addPlayer('ccc')
+          await game.addPlayer('ddd')
+          const player = game.getPlayer('ddd')
+          player.credits = 0
         }()
       })
 

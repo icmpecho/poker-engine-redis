@@ -49,7 +49,7 @@ class Game extends RedisObject {
     this.deck.shuffle()
     this.buttonPosition = this.nextPosition(this.buttonPosition)
     this.players.forEach(p => {
-      this.dealCard(p.hand, 2)
+      if (p.active) this.dealCard(p.hand, 2)
     })
     this._state = State.ongoing
   }
