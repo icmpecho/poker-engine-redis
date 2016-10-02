@@ -4,6 +4,7 @@ import { Pile } from './pile'
 
 enum State {
   normal,
+  played,
   allin,
   fold,
 }
@@ -37,6 +38,8 @@ class Player extends RedisObject {
     if (amount >= this.credits) {
       amount = this.credits
       this._state = State.allin
+    } else {
+      this._state = State.played
     }
     this.currentBet += amount
     this.credits -= amount

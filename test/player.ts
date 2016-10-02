@@ -93,6 +93,11 @@ describe('Player', function () {
       assert.equal(player.currentBet, 7)
     })
 
+    it('change state to played', function () {
+      player.bet(5)
+      assert.equal(player.state, 'played')
+    })
+
     it('set allin if not enough credits available', function () {
       player.bet(21)
       assert.equal(player.currentBet, 20)
