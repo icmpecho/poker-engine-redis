@@ -39,6 +39,10 @@ describe('Game', function () {
       it('has null as starting position', function () {
         assert.equal(game.startingPosition, null)
       })
+      
+      it('has null as current position', function () {
+        assert.equal(game.currentPosition, null)
+      })
     })
 
     describe('existing key', function () {
@@ -52,6 +56,7 @@ describe('Game', function () {
           const card = oldGame.deck.draw()
           oldGame.sharedCards.add(card)
           oldGame.startingPosition = 1
+          oldGame.currentPosition = 0
           await oldGame.addPlayer('aaa')
           await oldGame.addPlayer('bbb')
           oldGame.players[0].bet(10)
@@ -88,6 +93,10 @@ describe('Game', function () {
 
       it('load existing startingPosition', function () {
         assert.equal(game.startingPosition, 1)
+      })
+
+      it('load existing currentPosition', function () {
+        assert.equal(game.currentPosition, 0)
       })
     })
   })

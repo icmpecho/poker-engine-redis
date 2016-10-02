@@ -10,6 +10,7 @@ enum State {
   idle,
   starting,
   ongoing,
+  endOfRound,
   end
 }
 
@@ -18,6 +19,7 @@ class Game extends RedisObject {
   players: Player[]
   sharedCards: Pile
   startingPosition: number
+  currentPosition: number
   private _state: State
   constructor(client: RedisClient, key: string, public defaultCredits = 20) {
     super(client, key)
@@ -37,13 +39,20 @@ class Game extends RedisObject {
     this._state = State.starting
   }
 
-  // start(): void {
-  //   if (this._state != State.starting) {
-  //     throw new Error(`Game ${this.key} is not ready to start.`)
-  //   }
-  //   this._state = State.ongoing
-  //   this.newRound()
-  // }
+  start(): void {
+    if ((this._state != State.starting) && (this._state != State.endOfRound)) {
+      throw new Error(`Game ${this.key} is not ready to start.`)
+    }
+    this.deck.restoreDefault()
+    this.sharedCards.restoreDefault()
+    this.deck.shuffle()
+    this.nextStartingPosition()
+    this.players.forEach(p => {
+      p.hand.restoreDefault()
+      this.dealCard(p.hand, 2)
+    })
+    this._state = State.ongoing
+  }
 
   getPlayer(playerId: string): Player {
     const playerKey = this.playerKey(playerId)
@@ -75,6 +84,7 @@ class Game extends RedisObject {
     await this.loadProperty('_state', State.idle, parseInt)
     await this.loadPlayers()
     await this.loadProperty('startingPosition', null, JSON.parse)
+    await this.loadProperty('currentPosition', null, JSON.parse)
   }
 
   async save() {
@@ -83,6 +93,7 @@ class Game extends RedisObject {
     await this.saveProperty('_state')
     await Bluebird.map(this.players, p => p.save())
     await this.saveProperty('startingPosition')
+    await this.saveProperty('currentPosition')
   }
 
   private async loadPlayers() {
@@ -97,20 +108,27 @@ class Game extends RedisObject {
     return `${this.key}:players:${playerId}`
   }
 
-  // private newRound(): void {
-  //   this.deck.restoreDefault()
-  //   this.sharedCards.restoreDefault()
-  //   this.deck.shuffle()
-  //   this.players.forEach(p => {
-  //     p.hand.restoreDefault()
-  //     this.dealCard(p.hand, 2)
-  //   })
-  // }
+  private dealCard(target: Pile, count=1) {
+    const card = this.deck.draw()
+    _.times(count, () => target.add(card)) 
+  }
 
-  // private dealCard(target: Pile, count: number) {
-  //   const card = this.deck.draw()
-  //   _.times(count, () => target.add(card)) 
-  // }
+  private _nextStartingPosition(): void {
+    if (_.isNil(this.startingPosition)) {
+      this.startingPosition = 0
+    }
+    this.startingPosition += 1
+    if (this.startingPosition >= this.players.length) {
+      this.startingPosition = 0
+    }
+  }
+
+  private nextStartingPosition(): void {
+    this._nextStartingPosition()
+    while(this.players[this.startingPosition].credits <= 0) {
+      this._nextStartingPosition()
+    }
+  }
 }
 
 export { Game }
