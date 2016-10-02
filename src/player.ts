@@ -18,6 +18,10 @@ class Player extends RedisObject {
     this.hand = new Pile(client, `${key}:hand`)
   }
 
+  get active(): boolean {
+    return this.credits > 0
+  }
+
   bet(amount: number) {
     if (amount > this.credits) {
       throw new Error(`Player ${this.key} only have ${this.credits} credits.`)

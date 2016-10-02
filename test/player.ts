@@ -88,4 +88,23 @@ describe('Player', function () {
       assert.throw(() => player.bet(21))
     })
   })
+
+  describe('#active', function () {
+    let player: Player
+    beforeEach(function () {
+      return async function () {
+        player = new Player(client, 'my-key')
+        await player.load()
+      }()
+    })
+
+    it('return false if player has no credits', function () {
+      player.credits = 0
+      assert.isFalse(player.active)
+    })
+
+    it('return true otherwise', function () {
+      assert.isTrue(player.active)
+    })
+  })
 })

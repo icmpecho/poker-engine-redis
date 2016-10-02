@@ -128,7 +128,7 @@ class Game extends RedisObject {
 
   private nextPosition(position: number|null|undefined): number {
     let result = this.increasePosition(position)
-    while(this.players[result].credits <= 0) {
+    while(!this.players[result].active) {
       result = this.increasePosition(result)
     }
     return result
