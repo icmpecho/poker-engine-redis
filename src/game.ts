@@ -8,7 +8,7 @@ import { Player } from './player'
 
 enum State {
   idle,
-  starting,
+  preparing,
   ongoing,
   endOfRound,
   end
@@ -44,11 +44,11 @@ class Game extends RedisObject {
     if (this._state != State.idle) {
       throw new Error(`Game ${this.key} is already in ${State[this._state]} state.`)
     }
-    this._state = State.starting
+    this._state = State.preparing
   }
 
   start(): void {
-    if ((this._state != State.starting) && (this._state != State.endOfRound)) {
+    if ((this._state != State.preparing) && (this._state != State.endOfRound)) {
       throw new Error(`Game ${this.key} is not ready to start.`)
     }
     this.deck.restoreDefault()
@@ -72,7 +72,7 @@ class Game extends RedisObject {
 
   async addPlayer(playerId: string) {
     const playerKey = this.playerKey(playerId)
-    if (this._state != State.starting) {
+    if (this._state != State.preparing) {
       throw new Error(`Game ${this.key} is not accepting new player right now.`)
     }
     if (this.getPlayer(playerId)) {

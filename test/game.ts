@@ -71,7 +71,7 @@ describe('Game', function () {
       })
 
       it('load existing game state', function () {
-        assert.equal(game.state, 'starting')
+        assert.equal(game.state, 'preparing')
       })
 
       it('load existing players', function () {
@@ -148,7 +148,7 @@ describe('Game', function () {
 
     it('change game state from idle to starting', function () {
       game.init()
-      assert.equal(game.state, 'starting')
+      assert.equal(game.state, 'preparing')
     })
 
     it('throw exception if state is not idle', function () {
