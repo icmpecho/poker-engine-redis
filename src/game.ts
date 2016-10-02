@@ -54,7 +54,7 @@ class Game extends RedisObject {
     if (this._state != State.starting) {
       throw new Error(`Game ${this.key} is not accepting new player right now.`)
     }
-    if (_.find(this.players, ['key', playerKey])) {
+    if (this.getPlayer(playerId)) {
       throw new Error(`Player ${playerId} is already in ${this.key} game.`)
     }
     const player = new Player(this.client, playerKey, this.defaultCredits, this.players.length)
