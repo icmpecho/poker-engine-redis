@@ -32,6 +32,10 @@ class Pile extends RedisObject {
     return card
   }
 
+  restoreDefault() {
+    this.cards = _.cloneDeep(this.defaultCards)
+  }
+
   async save() {
     await this.saveProperty('cards')
   }

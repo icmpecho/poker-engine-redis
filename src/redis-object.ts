@@ -1,5 +1,6 @@
 import { RedisClient } from 'redis'
 import * as Bluebird from 'bluebird'
+import * as _ from 'lodash'
 
 interface Serializer {
   (input: any): string
@@ -38,7 +39,7 @@ class RedisObject {
     if (property) {
       this[name] = parser(property)
     } else {
-      this[name] = defaultValue
+      this[name] = _.cloneDeep(defaultValue)
     }
   }
 }

@@ -110,4 +110,17 @@ describe('Pile', function () {
     })
   })
 
+  describe('#restoreDefault', function () {
+    it('restore cards to default value', function () {
+      return async function () {
+        const cards = Card.all
+        const pile = new Pile(client, 'my-key', Card.all)
+        await pile.load()
+        pile.shuffle()
+        assert.notDeepEqual(pile.cards, cards)
+        pile.restoreDefault()
+        assert.deepEqual(pile.cards, cards)
+      }()
+    })
+  })
 })
