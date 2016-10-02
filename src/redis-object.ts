@@ -21,7 +21,7 @@ class RedisObject {
   [attrName: string]: any
   client: PromisifyRedis
 
-  constructor(client: RedisClient, private key: string) {
+  constructor(client: RedisClient, public key: string) {
     this.client = <PromisifyRedis>Bluebird.promisifyAll(client);
   }
 

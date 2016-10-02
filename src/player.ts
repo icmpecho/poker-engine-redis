@@ -6,17 +6,15 @@ class Player extends RedisObject {
   hand: Pile
   credits: number
   currentBet: number
-  private _key: string
 
   constructor(client: RedisClient, key: string, private defaultCredits = 20) {
     super(client, key)
-    this._key = key
     this.hand = new Pile(client, `${key}:hand`)
   }
 
   bet(amount: number) {
     if (amount > this.credits) {
-      throw new Error(`Player ${this._key} only have ${this.credits} credits.`)
+      throw new Error(`Player ${this.key} only have ${this.credits} credits.`)
     }
     this.currentBet += amount
     this.credits -= amount
