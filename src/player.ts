@@ -26,7 +26,7 @@ class Player extends RedisObject {
   }
 
   get active(): boolean {
-    return this.credits > 0
+    return this.credits > 0 && this._state != State.fold
   }
 
   get state(): string {

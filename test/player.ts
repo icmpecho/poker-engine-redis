@@ -114,6 +114,11 @@ describe('Player', function () {
       assert.isFalse(player.active)
     })
 
+    it('return false if player has folded', function () {
+      player.fold()
+      assert.isFalse(player.active)
+    })
+
     it('return true otherwise', function () {
       assert.isTrue(player.active)
     })
