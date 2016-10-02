@@ -2,11 +2,18 @@ import { RedisClient } from 'redis'
 import { RedisObject } from './redis-object'
 import { Pile } from './pile'
 
+enum State {
+  normal,
+  allin,
+  fold,
+}
+
 class Player extends RedisObject {
   hand: Pile
   credits: number
   currentBet: number
   position: number
+  private _state: State
 
   constructor(
     client: RedisClient,
@@ -22,12 +29,21 @@ class Player extends RedisObject {
     return this.credits > 0
   }
 
+  get state(): string {
+    return State[this._state]
+  }
+
   bet(amount: number) {
     if (amount > this.credits) {
-      throw new Error(`Player ${this.key} only have ${this.credits} credits.`)
+      amount = this.credits
+      this._state = State.allin
     }
     this.currentBet += amount
     this.credits -= amount
+  }
+
+  fold(): void {
+    this._state = State.fold
   }
 
   async load() {
@@ -35,6 +51,7 @@ class Player extends RedisObject {
     await this.loadProperty('credits', this.defaultCredits, parseInt)
     await this.loadProperty('currentBet', 0, parseInt)
     await this.loadProperty('position', this.defaultPosition, parseInt)
+    await this.loadProperty('_state', State.normal, parseInt)
   }
 
   async save() {
@@ -42,6 +59,7 @@ class Player extends RedisObject {
     await this.saveProperty('credits')
     await this.saveProperty('currentBet')
     await this.saveProperty('position')
+    await this.saveProperty('_state')
   }
 }
 

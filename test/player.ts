@@ -28,6 +28,10 @@ describe('Player', function () {
       it('initialize currentBet to zero', function () {
         assert.equal(player.currentBet, 0)
       })
+      
+      it('initialize state to normal', function () {
+        assert.equal(player.state, 'normal')
+      })
     })
 
     describe('existing key', function () {
@@ -39,6 +43,7 @@ describe('Player', function () {
           oldPlayer.hand.add(new Card('AS'))
           oldPlayer.credits = 10
           oldPlayer.currentBet = 2
+          oldPlayer.fold()
           await oldPlayer.save()
           player = new Player(client, 'existing-key')
           await player.load()
@@ -59,6 +64,10 @@ describe('Player', function () {
 
       it('load existing player position', function () {
         assert.equal(player.position, 2)
+      })
+
+      it('load existing player state', function () {
+        assert.equal(player.state, 'fold')
       })
     })
   })
@@ -84,8 +93,10 @@ describe('Player', function () {
       assert.equal(player.currentBet, 7)
     })
 
-    it('throw error if not enough credits available', function () {
-      assert.throw(() => player.bet(21))
+    it('set allin if not enough credits available', function () {
+      player.bet(21)
+      assert.equal(player.currentBet, 20)
+      assert.equal(player.state, 'allin')
     })
   })
 
