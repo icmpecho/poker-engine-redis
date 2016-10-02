@@ -34,7 +34,7 @@ class Player extends RedisObject {
   }
 
   bet(amount: number) {
-    if (amount > this.credits) {
+    if (amount >= this.credits) {
       amount = this.credits
       this._state = State.allin
     }
