@@ -46,7 +46,7 @@ class Game extends RedisObject {
     this.deck.restoreDefault()
     this.sharedCards.restoreDefault()
     this.deck.shuffle()
-    this.nextButtonPosition()
+    this.buttonPosition = this.nextPosition(this.buttonPosition)
     this.players.forEach(p => {
       p.hand.restoreDefault()
       this.dealCard(p.hand, 2)
@@ -109,25 +109,29 @@ class Game extends RedisObject {
   }
 
   private dealCard(target: Pile, count=1) {
-    const card = this.deck.draw()
-    _.times(count, () => target.add(card)) 
+    _.times(count, () => {
+      const card = this.deck.draw()
+      target.add(card)
+    }) 
   }
 
-  private _nextButtonPosition(): void {
-    if (_.isNil(this.buttonPosition)) {
-      this.buttonPosition = 0
+  private increasePosition(position: number|null|undefined): number {
+    if(_.isNil(position)) {
+      return 0
     }
-    this.buttonPosition += 1
-    if (this.buttonPosition >= this.players.length) {
-      this.buttonPosition = 0
+    let result = position + 1
+    if (result >= this.players.length) {
+      result = 0
     }
+    return result
   }
 
-  private nextButtonPosition(): void {
-    this._nextButtonPosition()
-    while(this.players[this.buttonPosition].credits <= 0) {
-      this._nextButtonPosition()
+  private nextPosition(position: number|null|undefined): number {
+    let result = this.increasePosition(position)
+    while(this.players[result].credits <= 0) {
+      result = this.increasePosition(result)
     }
+    return result
   }
 }
 

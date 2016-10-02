@@ -212,4 +212,60 @@ describe('Game', function () {
       assert.isUndefined(player)
     })
   })
+
+  describe('#start', function () {
+    let game: Game
+    beforeEach(function () {
+      return async function () {
+        game = new Game(client, 'my-key')
+        await game.load()
+      }()
+    })
+
+    it('throw exception if game is not ready to start', function() {
+      assert.throw(() => game.start())
+    })
+
+    describe('initialized', function () {
+      beforeEach(function () {
+        return async function () {
+          game.init()
+          await game.addPlayer('aaa')
+          await game.addPlayer('bbb')
+          await game.addPlayer('ccc')
+        }()
+      })
+
+      it('change game state to ongoing', function () {
+        game.start()
+        assert.equal(game.state, 'ongoing')
+      })
+
+      it('deal 2 cards to all players', function () {
+        game.start()
+        assert.lengthOf(game.players[0].hand.cards, 2)
+        assert.lengthOf(game.players[1].hand.cards, 2)
+        assert.lengthOf(game.players[2].hand.cards, 2)
+        assert.lengthOf(game.deck.cards, 46)
+      })
+
+      it('place button on first player', function () {
+        game.start()
+        assert.equal(game.buttonPosition, 0)
+      })
+
+      it('place button to next player if there is not the first game', function () {
+        game.buttonPosition = 0
+        game.start()
+        assert.equal(game.buttonPosition, 1)
+      })
+
+      it('skip player that have no credits while placing button', function () {
+        game.buttonPosition = 1
+        game.players[2].credits = 0
+        game.start()
+        assert.equal(game.buttonPosition, 0)
+      })
+    })
+  })
 })
