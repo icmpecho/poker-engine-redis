@@ -47,6 +47,10 @@ class Game extends RedisObject {
     return this.nextPosition(this.smallBlindPosition)
   }
 
+  get isInprogress(): boolean {
+    return this._state >= State.preflop && this._state < State.endOfRound
+  }
+
   init(): void {
     if (this._state != State.idle) {
       throw new Error(`Game ${this.key} is already in ${State[this._state]} state.`)
@@ -70,6 +74,12 @@ class Game extends RedisObject {
     this.players[this.bigBlindPosition].bet(2)
     this.currentPosition = this.nextPosition(this.bigBlindPosition)
     this._state = State.preflop
+  }
+
+  fold(playerId: string): void {
+    this.verifyTurn(playerId)
+    this.currentPlayer.fold()
+    this.currentPosition = this.nextPosition(this.currentPosition)
   }
 
   getPlayer(playerId: string): Player {
@@ -154,6 +164,15 @@ class Game extends RedisObject {
       result = this.increasePosition(result)
     }
     return result
+  }
+
+  private verifyTurn(playerId: string): void {
+    if (!this.isInprogress) {
+      throw new Error(`Game ${this.key} is not in progress`)
+    }
+    if (this.playerId(this.currentPlayer) != playerId) {
+      throw new Error(`It's not ${playerId}'s turn`)
+    }
   }
 }
 

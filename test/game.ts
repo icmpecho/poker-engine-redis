@@ -295,4 +295,44 @@ describe('Game', function () {
       })
     })
   })
+
+  describe('#fold', function () {
+    let game: Game
+    beforeEach(function () {
+      return async function() {
+        game = new Game(client, 'my-key')
+        await game.load()
+        game.init()
+        await game.addPlayer('aaa')
+        await game.addPlayer('bbb')
+        await game.addPlayer('ccc')
+        await game.addPlayer('ddd')
+      }()
+    })
+
+    it('throw error if game is not in progress', function () {
+      assert.throw(() => game.fold('aaa'))
+    })
+
+    describe('started', function () {
+      beforeEach(function () {
+        game.start()
+      })
+
+      it('throw error if player is not current player', function () {
+        assert.equal(game.playerId(game.currentPlayer), 'ddd')
+        assert.throw(() => game.fold('aaa'))
+      })
+
+      it('mark current player as fold', function () {
+        game.fold('ddd')
+        assert.equal(game.getPlayer('ddd').state, 'fold')
+      })
+
+      it('change current position to next active player', function () {
+        game.fold('ddd')
+        assert.equal(game.playerId(game.currentPlayer), 'aaa')
+      })
+    })
+  })
 })
