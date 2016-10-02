@@ -274,6 +274,25 @@ describe('Game', function () {
         game.start()
         assert.throw(() => game.start())
       })
+
+      it('deduct small blind from active player next to button', function () {
+        game.start()
+        const player = game.getPlayer('bbb')
+        assert.equal(player.currentBet, 1)
+        assert.equal(player.credits, 19)
+      })
+
+      it('deduct big blind from active player next to small blind', function () {
+        game.start()
+        const player = game.getPlayer('ccc')
+        assert.equal(player.currentBet, 2)
+        assert.equal(player.credits, 18)
+      })
+
+      it('set current position to active player next to big blind', function () {
+        game.start()
+        assert.equal(game.currentPosition, 0)
+      })
     })
   })
 })

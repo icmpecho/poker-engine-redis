@@ -32,6 +32,14 @@ class Game extends RedisObject {
     return State[this._state]
   }
 
+  get smallBlindPosition(): number {
+    return this.nextPosition(this.buttonPosition)
+  }
+
+  get bigBlindPosition(): number {
+    return this.nextPosition(this.smallBlindPosition)
+  }
+
   init(): void {
     if (this._state != State.idle) {
       throw new Error(`Game ${this.key} is already in ${State[this._state]} state.`)
@@ -51,6 +59,9 @@ class Game extends RedisObject {
     this.players.forEach(p => {
       if (p.active) this.dealCard(p.hand, 2)
     })
+    this.players[this.smallBlindPosition].bet(1)
+    this.players[this.bigBlindPosition].bet(2)
+    this.currentPosition = this.nextPosition(this.bigBlindPosition)
     this._state = State.ongoing
   }
 
