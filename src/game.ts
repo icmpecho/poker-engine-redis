@@ -77,6 +77,10 @@ class Game extends RedisObject {
     return _.find(this.players, ['key', playerKey])
   }
 
+  playerId(player: Player): string {
+    return /^.*:players:(.*)$/g.exec(player.key)[1] 
+  }
+
   async addPlayer(playerId: string) {
     const playerKey = this.playerKey(playerId)
     if (this._state != State.preparing) {

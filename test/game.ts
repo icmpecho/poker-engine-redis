@@ -291,7 +291,7 @@ describe('Game', function () {
 
       it('set current position to active player next to big blind', function () {
         game.start()
-        assert.equal(game.currentPlayer.id, 'aaa')
+        assert.equal(game.playerId(game.currentPlayer), 'aaa')
       })
     })
   })
