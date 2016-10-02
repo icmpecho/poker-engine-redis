@@ -66,9 +66,10 @@ describe('Game', function () {
 
       it('load existing players', function () {
         assert.lengthOf(game.players, 2)
-        assert.equal(game.players[0].key, 'existing-key:players:aaa')
-        assert.equal(game.players[0].currentBet, 10)
-        assert.equal(game.players[0].credits, 10)
+        const player = game.getPlayer('aaa')
+        assert.equal(player.key, 'existing-key:players:aaa')
+        assert.equal(player.currentBet, 10)
+        assert.equal(player.credits, 10)
       })
 
       it('load existing shared cards', function () {
