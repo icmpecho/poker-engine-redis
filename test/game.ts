@@ -35,6 +35,10 @@ describe('Game', function () {
       it('has empty shared cards', function () {
         assert.lengthOf(game.sharedCards.cards, 0)
       })
+
+      it('has null as starting position', function () {
+        assert.equal(game.startingPosition, null)
+      })
     })
 
     describe('existing key', function () {
@@ -47,6 +51,7 @@ describe('Game', function () {
           oldGame.deck.shuffle()
           const card = oldGame.deck.draw()
           oldGame.sharedCards.add(card)
+          oldGame.startingPosition = 1
           await oldGame.addPlayer('aaa')
           await oldGame.addPlayer('bbb')
           oldGame.players[0].bet(10)
@@ -79,6 +84,10 @@ describe('Game', function () {
 
       it('load existing shared cards', function () {
         assert.lengthOf(game.sharedCards.cards, 1)
+      })
+
+      it('load existing startingPosition', function () {
+        assert.equal(game.startingPosition, 1)
       })
     })
   })

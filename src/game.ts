@@ -17,6 +17,7 @@ class Game extends RedisObject {
   deck: Pile
   players: Player[]
   sharedCards: Pile
+  startingPosition: number
   private _state: State
   constructor(client: RedisClient, key: string, public defaultCredits = 20) {
     super(client, key)
@@ -73,6 +74,7 @@ class Game extends RedisObject {
     await this.sharedCards.load()
     await this.loadProperty('_state', State.idle, parseInt)
     await this.loadPlayers()
+    await this.loadProperty('startingPosition', null, JSON.parse)
   }
 
   async save() {
@@ -80,6 +82,7 @@ class Game extends RedisObject {
     await this.sharedCards.save()
     await this.saveProperty('_state')
     await Bluebird.map(this.players, p => p.save())
+    await this.saveProperty('startingPosition')
   }
 
   private async loadPlayers() {
