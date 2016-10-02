@@ -10,6 +10,9 @@ enum State {
   idle,
   preparing,
   preflop,
+  theFlop,
+  theTurn,
+  theRiver,
   endOfRound,
   end
 }
