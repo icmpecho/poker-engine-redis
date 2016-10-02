@@ -34,7 +34,7 @@ describe('Player', function () {
       let player: Player
       beforeEach(function() {
         return async function () {
-          const oldPlayer = new Player(client, 'existing-key')
+          const oldPlayer = new Player(client, 'existing-key', 20, 2)
           await oldPlayer.load()
           oldPlayer.hand.add(new Card('AS'))
           oldPlayer.credits = 10
@@ -55,6 +55,10 @@ describe('Player', function () {
 
       it('load existing currentBet', function () {
         assert.equal(player.currentBet, 2)
+      })
+
+      it('load existing player position', function () {
+        assert.equal(player.position, 2)
       })
     })
   })

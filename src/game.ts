@@ -57,7 +57,7 @@ class Game extends RedisObject {
     if (_.find(this.players, ['key', playerKey])) {
       throw new Error(`Player ${playerId} is already in ${this.key} game.`)
     }
-    const player = new Player(this.client, playerKey, this.defaultCredits)
+    const player = new Player(this.client, playerKey, this.defaultCredits, this.players.length)
     await player.load()
     this.players.push(player)
   }
@@ -87,6 +87,7 @@ class Game extends RedisObject {
     const playerKeys = _.uniq(keys.map(key => /^(.*:players:.*?)(:|$)/g.exec(key)[1]))
     this.players = playerKeys.map(key => new Player(this.client, key, this.defaultCredits))
     await Bluebird.map(this.players, p => p.load())
+    this.players = _.sortBy(this.players, 'position')
   }
 
   private playerKey(playerId: string): string {

@@ -72,6 +72,11 @@ describe('Game', function () {
         assert.equal(player.credits, 10)
       })
 
+      it('sort player by position', function () {
+        assert.equal(game.players[0].position, 0)
+        assert.equal(game.players[1].position, 1)
+      })
+
       it('load existing shared cards', function () {
         assert.lengthOf(game.sharedCards.cards, 1)
       })
