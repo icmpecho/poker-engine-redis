@@ -35,6 +35,10 @@ class Game extends RedisObject {
     return State[this._state]
   }
 
+  get currentPlayer(): Player {
+    return this.players[this.currentPosition]
+  }
+
   get smallBlindPosition(): number {
     return this.nextPosition(this.buttonPosition)
   }

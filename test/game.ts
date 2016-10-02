@@ -291,7 +291,7 @@ describe('Game', function () {
 
       it('set current position to active player next to big blind', function () {
         game.start()
-        assert.equal(game.currentPosition, 0)
+        assert.equal(game.currentPlayer.key, 'my-key:players:aaa')
       })
     })
   })
