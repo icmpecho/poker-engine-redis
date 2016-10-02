@@ -45,12 +45,12 @@ class Game extends RedisObject {
   // }
 
   getPlayer(playerId: string): Player {
-    const playerKey = `${this.key}:players:${playerId}`
+    const playerKey = this.playerKey(playerId)
     return _.find(this.players, ['key', playerKey])
   }
 
   async addPlayer(playerId: string) {
-    const playerKey = `${this.key}:players:${playerId}`
+    const playerKey = this.playerKey(playerId)
     if (this._state != State.starting) {
       throw new Error(`Game ${this.key} is not accepting new player right now.`)
     }
@@ -87,6 +87,10 @@ class Game extends RedisObject {
     const playerKeys = _.uniq(keys.map(key => /^(.*:players:.*?)(:|$)/g.exec(key)[1]))
     this.players = playerKeys.map(key => new Player(this.client, key, this.defaultCredits))
     await Bluebird.map(this.players, p => p.load())
+  }
+
+  private playerKey(playerId: string): string {
+    return `${this.key}:players:${playerId}`
   }
 
   // private newRound(): void {
