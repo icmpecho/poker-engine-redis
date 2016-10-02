@@ -118,4 +118,38 @@ describe('Player', function () {
       assert.isTrue(player.active)
     })
   })
+
+  describe('#newRound', function () {
+    let player: Player
+    beforeEach(function () {
+      return async function () {
+        player = new Player(client, 'my-key')
+        await player.load()
+        player.bet(5)
+        player.fold()
+        player.hand.add(new Card('AS'))
+      }()
+    })
+
+    it('remove currentBet', function () {
+      player.newRound()
+      assert.equal(player.currentBet, 0)
+    })
+
+    it('reset state to normal', function () {
+      player.newRound()
+      assert.equal(player.state, 'normal')
+    })
+
+    it('set state to fold if no credits', function () {
+      player.credits = 0
+      player.newRound()
+      assert.equal(player.state, 'fold')
+    })
+
+    it('clear player hand', function () {
+      player.newRound()
+      assert.lengthOf(player.hand.cards, 0)
+    })
+  })
 })

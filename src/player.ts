@@ -46,6 +46,12 @@ class Player extends RedisObject {
     this._state = State.fold
   }
 
+  newRound(): void {
+    this.currentBet = 0
+    this._state = this.credits > 0 ? State.normal : State.fold
+    this.hand.restoreDefault()
+  }
+
   async load() {
     await this.hand.load()
     await this.loadProperty('credits', this.defaultCredits, parseInt)

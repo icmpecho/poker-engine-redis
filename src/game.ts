@@ -44,11 +44,11 @@ class Game extends RedisObject {
       throw new Error(`Game ${this.key} is not ready to start.`)
     }
     this.deck.restoreDefault()
+    this.players.forEach(p => p.newRound())
     this.sharedCards.restoreDefault()
     this.deck.shuffle()
     this.buttonPosition = this.nextPosition(this.buttonPosition)
     this.players.forEach(p => {
-      p.hand.restoreDefault()
       this.dealCard(p.hand, 2)
     })
     this._state = State.ongoing
