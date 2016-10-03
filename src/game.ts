@@ -51,6 +51,11 @@ class Game extends RedisObject {
     return this._state >= State.preflop && this._state < State.endOfRound
   }
 
+  get highestBet(): number {
+    const bets = this.players.map(x => x.currentBet)
+    return _.max(bets)
+  }
+
   init(): void {
     if (this._state != State.idle) {
       throw new Error(`Game ${this.key} is already in ${State[this._state]} state.`)
@@ -79,6 +84,16 @@ class Game extends RedisObject {
   fold(playerId: string): void {
     this.verifyTurn(playerId)
     this.currentPlayer.fold()
+    this.currentPosition = this.nextPosition(this.currentPosition)
+  }
+
+  check(playerId: string): void {
+    this.verifyTurn(playerId)
+    const highestBet = this.highestBet
+    if (this.currentPlayer.currentBet < highestBet) {
+      throw new Error(`Can not check, highest bet is ${highestBet}`)
+    }
+    this.currentPlayer.bet(0)
     this.currentPosition = this.nextPosition(this.currentPosition)
   }
 

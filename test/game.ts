@@ -296,7 +296,7 @@ describe('Game', function () {
     })
   })
 
-  describe('#fold', function () {
+  describe('#fold, #check', function () {
     let game: Game
     beforeEach(function () {
       return async function() {
@@ -312,6 +312,7 @@ describe('Game', function () {
 
     it('throw error if game is not in progress', function () {
       assert.throw(() => game.fold('aaa'))
+      assert.throw(() => game.check('aaa'))
     })
 
     describe('started', function () {
@@ -322,17 +323,46 @@ describe('Game', function () {
       it('throw error if player is not current player', function () {
         assert.equal(game.playerId(game.currentPlayer), 'ddd')
         assert.throw(() => game.fold('aaa'))
+        assert.throw(() => game.check('aaa'))
       })
 
-      it('mark current player as fold', function () {
-        game.fold('ddd')
-        assert.equal(game.getPlayer('ddd').state, 'fold')
+      describe('#fold', function () {
+        it('mark current player as fold', function () {
+          game.fold('ddd')
+          assert.equal(game.getPlayer('ddd').state, 'fold')
+        })
+
+        it('change current position to next active player', function () {
+          game.fold('ddd')
+          assert.equal(game.playerId(game.currentPlayer), 'aaa')
+        })
       })
 
-      it('change current position to next active player', function () {
-        game.fold('ddd')
-        assert.equal(game.playerId(game.currentPlayer), 'aaa')
+      describe('#check', function () {
+        it('throw error if current player bet does not match the highest', function () {
+          game.getPlayer('ccc').bet(5)
+          assert.throw(() => game.check('ddd'))
+        })
+
+        it('mark current player as played', function () {
+          game.getPlayer('ddd').currentBet = 2
+          game.check('ddd')
+          assert.equal(game.getPlayer('ddd').state, 'played')
+        })
+
+        it('does not change currentBet of the player', function () {
+          game.getPlayer('ddd').currentBet = 2
+          game.check('ddd')
+          assert.equal(game.getPlayer('ddd').currentBet, 2)
+        })
+
+        it('change current position to next active player', function () {
+          game.getPlayer('ddd').currentBet = 2
+          game.check('ddd')
+          assert.equal(game.playerId(game.currentPlayer), 'aaa')
+        })
       })
     })
   })
+
 })
