@@ -160,6 +160,7 @@ class Game extends RedisObject {
     await this.loadPlayers()
     await this.loadProperty('buttonPosition', null, JSON.parse)
     await this.loadProperty('currentPosition', null, JSON.parse)
+    await this.loadProperty('defaultCredits', this.defaultCredits, parseInt)
   }
 
   async save() {
@@ -169,6 +170,7 @@ class Game extends RedisObject {
     await Bluebird.map(this.players, p => p.save())
     await this.saveProperty('buttonPosition')
     await this.saveProperty('currentPosition')
+    await this.saveProperty('defaultCredits')
   }
 
   private async loadPlayers() {

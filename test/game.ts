@@ -13,7 +13,7 @@ describe('Game', function () {
       let game: Game
       beforeEach(function () {
         return async function() {
-          game = new Game(client, 'my-key')
+          game = new Game(client, 'my-key', 30)
           await game.load()
           await game.save()
         }()
@@ -43,13 +43,25 @@ describe('Game', function () {
       it('has null as current position', function () {
         assert.equal(game.currentPosition, null)
       })
+
+      it('set defaultCredits', function () {
+        assert.equal(game.defaultCredits, 30)
+      })
+
+      it('propergate defaultCredits to players', function () {
+        return async function () {
+          game.init()
+          await game.addPlayer('aaa')
+          assert.equal(game.getPlayer('aaa').credits, 30)
+        }()
+      })
     })
 
     describe('existing key', function () {
       let game: Game
       beforeEach(function () {
         return async function () {
-          const oldGame = new Game(client, 'existing-key')
+          const oldGame = new Game(client, 'existing-key', 30)
           await oldGame.load()
           oldGame.init()
           oldGame.deck.shuffle()
@@ -74,12 +86,16 @@ describe('Game', function () {
         assert.equal(game.state, 'preparing')
       })
 
+      it('load defaultCredits', function () {
+        assert.equal(game.defaultCredits, 30)
+      })
+
       it('load existing players', function () {
         assert.lengthOf(game.players, 2)
         const player = game.getPlayer('aaa')
         assert.equal(player.key, 'existing-key:players:aaa')
         assert.equal(player.currentBet, 10)
-        assert.equal(player.credits, 10)
+        assert.equal(player.credits, 20)
       })
 
       it('sort player by position', function () {
