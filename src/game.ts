@@ -119,6 +119,12 @@ class Game extends RedisObject {
     this.currentPosition = this.nextPosition(this.currentPosition)
   }
 
+  allIn(playerId: string): void {
+    this.verifyTurn(playerId)
+    this.currentPlayer.bet(this.currentPlayer.credits)
+    this.currentPosition = this.nextPosition(this.currentPosition)
+  }
+
   getPlayer(playerId: string): Player {
     const playerKey = this.playerKey(playerId)
     return _.find(this.players, ['key', playerKey])

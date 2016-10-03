@@ -315,6 +315,7 @@ describe('Game', function () {
       assert.throw(() => game.check('ddd'))
       assert.throw(() => game.call('ddd'))
       assert.throw(() => game.raise('ddd', 10))
+      assert.throw(() => game.allIn('ddd'))
     })
 
     describe('started', function () {
@@ -328,6 +329,7 @@ describe('Game', function () {
         assert.throw(() => game.check('aaa'))
         assert.throw(() => game.call('aaa'))
         assert.throw(() => game.raise('aaa', 10))
+        assert.throw(() => game.allIn('aaa'))
       })
 
       describe('#fold', function () {
@@ -408,6 +410,24 @@ describe('Game', function () {
 
         it('change current position to next active player', function () {
           game.raise('ddd', 10)
+          assert.equal(game.playerId(game.currentPlayer), 'aaa')
+        })
+      })
+
+      describe('#allIn', function () {
+        it('put all current player credits to currentBet', function () {
+          game.allIn('ddd')
+          assert.equal(game.getPlayer('ddd').currentBet, 20)
+          assert.equal(game.getPlayer('ddd').credits, 0)
+        })
+
+        it('mark current player as allin', function () {
+          game.allIn('ddd')
+          assert.equal(game.getPlayer('ddd').state, 'allin')
+        })
+
+        it('change current position to next active player', function () {
+          game.allIn('ddd')
           assert.equal(game.playerId(game.currentPlayer), 'aaa')
         })
       })
