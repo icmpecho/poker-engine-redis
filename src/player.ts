@@ -3,7 +3,7 @@ import { RedisObject } from './redis-object'
 import { Pile } from './pile'
 
 enum State {
-  normal,
+  waiting,
   played,
   allin,
   fold,
@@ -51,7 +51,7 @@ class Player extends RedisObject {
 
   newRound(): void {
     this.currentBet = 0
-    this._state = this.credits > 0 ? State.normal : State.fold
+    this._state = this.credits > 0 ? State.waiting : State.fold
     this.hand.restoreDefault()
   }
 
@@ -60,7 +60,7 @@ class Player extends RedisObject {
     await this.loadProperty('credits', this.defaultCredits, parseInt)
     await this.loadProperty('currentBet', 0, parseInt)
     await this.loadProperty('position', this.defaultPosition, parseInt)
-    await this.loadProperty('_state', State.normal, parseInt)
+    await this.loadProperty('_state', State.waiting, parseInt)
   }
 
   async save() {

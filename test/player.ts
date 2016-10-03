@@ -30,7 +30,7 @@ describe('Player', function () {
       })
       
       it('initialize state to normal', function () {
-        assert.equal(player.state, 'normal')
+        assert.equal(player.state, 'waiting')
       })
     })
 
@@ -148,7 +148,7 @@ describe('Player', function () {
 
     it('reset state to normal', function () {
       player.newRound()
-      assert.equal(player.state, 'normal')
+      assert.equal(player.state, 'waiting')
     })
 
     it('set state to fold if no credits', function () {
