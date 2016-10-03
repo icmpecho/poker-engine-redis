@@ -97,6 +97,17 @@ class Game extends RedisObject {
     this.currentPosition = this.nextPosition(this.currentPosition)
   }
 
+  call(playerId: string): void {
+    this.verifyTurn(playerId)
+    const highestBet = this.highestBet
+    const currentBet = this.currentPlayer.currentBet
+    if (currentBet >= highestBet) {
+      throw new Error(`This player is already the highest bet`)
+    }
+    this.currentPlayer.bet(highestBet - currentBet)
+    this.currentPosition = this.nextPosition(this.currentPosition)
+  }
+
   getPlayer(playerId: string): Player {
     const playerKey = this.playerKey(playerId)
     return _.find(this.players, ['key', playerKey])

@@ -313,6 +313,7 @@ describe('Game', function () {
     it('throw error if game is not in progress', function () {
       assert.throw(() => game.fold('aaa'))
       assert.throw(() => game.check('aaa'))
+      assert.throw(() => game.call('aaa'))
     })
 
     describe('started', function () {
@@ -324,6 +325,7 @@ describe('Game', function () {
         assert.equal(game.playerId(game.currentPlayer), 'ddd')
         assert.throw(() => game.fold('aaa'))
         assert.throw(() => game.check('aaa'))
+        assert.throw(() => game.call('aaa'))
       })
 
       describe('#fold', function () {
@@ -359,6 +361,29 @@ describe('Game', function () {
         it('change current position to next active player', function () {
           game.getPlayer('ddd').currentBet = 2
           game.check('ddd')
+          assert.equal(game.playerId(game.currentPlayer), 'aaa')
+        })
+      })
+
+      describe('#call', function () {
+        it('throw error if current player already has the highest bet', function () {
+          game.getPlayer('ddd').currentBet = 5
+          assert.throw(() => game.call('ddd'))
+        })
+
+        it('set current player bet to the highest bet', function () {
+          game.getPlayer('aaa').bet(5)
+          game.call('ddd')
+          assert.equal(game.getPlayer('ddd').currentBet, 5)
+        })
+
+        it('mark current player as played', function () {
+          game.call('ddd')
+          assert.equal(game.getPlayer('ddd').state, 'played')
+        })
+
+        it('change current position to next active player', function () {
+          game.call('ddd')
           assert.equal(game.playerId(game.currentPlayer), 'aaa')
         })
       })
