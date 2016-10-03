@@ -108,6 +108,17 @@ class Game extends RedisObject {
     this.currentPosition = this.nextPosition(this.currentPosition)
   }
 
+  raise(playerId: string, targetValue: number): void {
+    this.verifyTurn(playerId)
+    const highestBet = this.highestBet
+    const currentBet = this.currentPlayer.currentBet
+    if (targetValue <= highestBet) {
+      throw new Error(`Invalid raise target ${targetValue}, highest bet is ${highestBet}`)
+    }
+    this.currentPlayer.bet(targetValue - currentBet)
+    this.currentPosition = this.nextPosition(this.currentPosition)
+  }
+
   getPlayer(playerId: string): Player {
     const playerKey = this.playerKey(playerId)
     return _.find(this.players, ['key', playerKey])

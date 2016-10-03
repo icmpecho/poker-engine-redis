@@ -296,7 +296,7 @@ describe('Game', function () {
     })
   })
 
-  describe('#fold, #check', function () {
+  describe('#fold, #check, #call, #raise', function () {
     let game: Game
     beforeEach(function () {
       return async function() {
@@ -311,9 +311,10 @@ describe('Game', function () {
     })
 
     it('throw error if game is not in progress', function () {
-      assert.throw(() => game.fold('aaa'))
-      assert.throw(() => game.check('aaa'))
-      assert.throw(() => game.call('aaa'))
+      assert.throw(() => game.fold('ddd'))
+      assert.throw(() => game.check('ddd'))
+      assert.throw(() => game.call('ddd'))
+      assert.throw(() => game.raise('ddd', 10))
     })
 
     describe('started', function () {
@@ -326,6 +327,7 @@ describe('Game', function () {
         assert.throw(() => game.fold('aaa'))
         assert.throw(() => game.check('aaa'))
         assert.throw(() => game.call('aaa'))
+        assert.throw(() => game.raise('aaa', 10))
       })
 
       describe('#fold', function () {
@@ -384,6 +386,28 @@ describe('Game', function () {
 
         it('change current position to next active player', function () {
           game.call('ddd')
+          assert.equal(game.playerId(game.currentPlayer), 'aaa')
+        })
+      })
+
+      describe('#raise', function () {
+        it('throw error if target is le highest bet', function () {
+          game.getPlayer('aaa').bet(5)
+          assert.throw(() => game.raise('ddd', 5))
+        })
+
+        it('set current player bet to the target', function () {
+          game.raise('ddd', 10)
+          assert.equal(game.getPlayer('ddd').currentBet, 10)
+        })
+
+        it('mark current player as played', function () {
+          game.raise('ddd', 10)
+          assert.equal(game.getPlayer('ddd').state, 'played')
+        })
+
+        it('change current position to next active player', function () {
+          game.raise('ddd', 10)
           assert.equal(game.playerId(game.currentPlayer), 'aaa')
         })
       })
