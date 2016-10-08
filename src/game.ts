@@ -102,7 +102,7 @@ class Game extends RedisObject {
   fold(playerId: string): void {
     this.verifyTurn(playerId)
     this.currentPlayer.fold()
-    this.endTurn()
+    this.processTurn()
   }
 
   check(playerId: string): void {
@@ -112,7 +112,7 @@ class Game extends RedisObject {
       throw new Error(`Can not check, highest bet is ${highestBet}`)
     }
     this.currentPlayer.bet(0)
-    this.endTurn()
+    this.processTurn()
   }
 
   call(playerId: string): void {
@@ -123,7 +123,7 @@ class Game extends RedisObject {
       throw new Error(`This player is already the highest bet`)
     }
     this.currentPlayer.bet(highestBet - currentBet)
-    this.endTurn()
+    this.processTurn()
   }
 
   raise(playerId: string, targetValue: number): void {
@@ -134,13 +134,13 @@ class Game extends RedisObject {
       throw new Error(`Invalid raise target ${targetValue}, highest bet is ${highestBet}`)
     }
     this.currentPlayer.bet(targetValue - currentBet)
-    this.endTurn()
+    this.processTurn()
   }
 
   allIn(playerId: string): void {
     this.verifyTurn(playerId)
     this.currentPlayer.bet(this.currentPlayer.credits)
-    this.endTurn()
+    this.processTurn()
   }
 
   getPlayer(playerId: string): Player {
@@ -238,7 +238,7 @@ class Game extends RedisObject {
     }
   }
 
-  private endTurn(): void {
+  private processTurn(): void {
     if (!this.isDoneBetting) {
       this.currentPosition = this.nextPosition(this.currentPosition)
     }
