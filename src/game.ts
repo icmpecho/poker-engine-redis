@@ -79,7 +79,7 @@ class Game extends RedisObject {
     this.deck.shuffle()
     this.buttonPosition = this.nextPosition(this.buttonPosition)
     this.players.forEach(p => {
-      if (p.active) this.dealCard(p.hand, 2)
+      if (p.isActive) this.dealCard(p.hand, 2)
     })
     this.players[this.smallBlindPosition].bet(1)
     this.players[this.bigBlindPosition].bet(2)
@@ -211,7 +211,7 @@ class Game extends RedisObject {
 
   private nextPosition(position: number|null|undefined): number {
     let result = this.increasePosition(position)
-    while(!this.players[result].active) {
+    while(!this.players[result].isActive) {
       result = this.increasePosition(result)
     }
     return result

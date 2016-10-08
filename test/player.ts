@@ -116,16 +116,16 @@ describe('Player', function () {
 
     it('return false if player has no credits', function () {
       player.credits = 0
-      assert.isFalse(player.active)
+      assert.isFalse(player.isActive)
     })
 
     it('return false if player has folded', function () {
       player.fold()
-      assert.isFalse(player.active)
+      assert.isFalse(player.isActive)
     })
 
     it('return true otherwise', function () {
-      assert.isTrue(player.active)
+      assert.isTrue(player.isActive)
     })
   })
 

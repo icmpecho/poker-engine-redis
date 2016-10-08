@@ -26,7 +26,7 @@ class Player extends RedisObject {
     this.hand = new Pile(client, `${key}:hand`)
   }
 
-  get active(): boolean {
+  get isActive(): boolean {
     return this.credits > 0 && this._state != State.fold
   }
 
