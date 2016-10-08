@@ -30,6 +30,10 @@ class Player extends RedisObject {
     return this.credits > 0 && this._state != State.fold
   }
 
+  get isWaiting(): boolean {
+    return this._state == State.waiting
+  }
+
   get state(): string {
     return State[this._state]
   }

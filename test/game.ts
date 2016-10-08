@@ -450,4 +450,22 @@ describe('Game', function () {
     })
   })
 
+  describe('#doneBetting', function () {
+    let game: Game
+    beforeEach(function () {
+      return async function () {
+        game = new Game(client, 'my-key')
+        await game.load()
+        game.init()
+        await game.addPlayer('aaa')
+        await game.addPlayer('bbb')
+        await game.addPlayer('ccc')
+        await game.addPlayer('ddd')
+      }()
+    })
+
+    it('return false if there still players in waiting state', function () {
+      assert.isFalse(game.doneBetting)
+    })
+  })
 })

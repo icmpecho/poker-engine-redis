@@ -56,6 +56,12 @@ class Game extends RedisObject {
     return _.max(bets)
   }
 
+  get doneBetting(): boolean {
+    const waitingPlayerExists = this.players.filter(x => x.isWaiting).length > 0
+    if (waitingPlayerExists) return false
+    return true
+  }
+
   init(): void {
     if (this._state != State.idle) {
       throw new Error(`Game ${this.key} is already in ${State[this._state]} state.`)
