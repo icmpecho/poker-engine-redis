@@ -459,6 +459,53 @@ describe('Game', function () {
           assert.equal(game.playerId(game.currentPlayer), 'aaa')
         })
       })
+
+      describe('#collectBets', function () {
+        it('collect bets from all players into pot', function () {
+          _.times(3, () => game.call(game.playerId(game.currentPlayer)))
+          assert.equal(game.currentPot.value, 8)
+          game.players.forEach(p => {
+            assert.equal(p.currentBet, 0)
+          })
+        })
+
+        describe('all-in situation', function () {
+          beforeEach(function () {
+            const playerA = game.getPlayer('aaa')
+            const playerD = game.getPlayer('ddd')
+            playerA.credits = 10
+            playerD.credits = 15
+            game.allIn('ddd')
+            game.allIn('aaa')
+            game.raise('bbb', 16)
+            game.call('ccc')
+          })
+
+          it('split pots into 3 pots', function () {
+            assert.lengthOf(game.pots, 3)
+          })
+
+          it('contains credits up to playerA bet in first pot', function () {
+            assert.equal(game.pots[0].value, 40)
+          })
+
+          it('does not exclude anyone from first pot', function () {
+            assert.isUndefined(game.pots[0].excludedPlayerIds)
+          })
+
+          it('contains credits up to playerD bet in second pot', function () {
+            assert.equal(game.pots[1].value, 15)
+          })
+
+          it('exclude playerA from the second pot', function () {
+            assert.deepEqual(game.pots[1].excludedPlayerIds, ['aaa'])
+          })
+
+          it('contains credits up to highest bet in third pot', function () {
+            assert.equal(game.pots[2].value, 2)
+          })
+        })
+      })
     })
   })
 
@@ -492,8 +539,6 @@ describe('Game', function () {
       player.credits = 5
       game.raise(game.playerId(game.currentPlayer), 10)
       _.times(3, () => game.call(game.playerId(game.currentPlayer)))
-      assert.equal(game.highestBet, 10)
-      assert.equal(player.currentBet, 5)
       assert.equal(player.credits, 0)
       assert.equal(player.state, 'allin')
       assert.isTrue(game.isDoneBetting)

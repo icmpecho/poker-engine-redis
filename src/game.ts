@@ -74,6 +74,14 @@ class Game extends RedisObject {
     return this.activePlayers.filter(x => x.currentBet < this.highestBet)
   }
 
+  get allInPlayers(): Player[] {
+    return this.players.filter(x => x.isAllIn)
+  }
+
+  get currentPot(): Pot {
+    return this.pots[this.pots.length - 1]
+  }
+
   get isDoneBetting(): boolean {
     const waitingPlayerExists = this.waitingPlayers.length > 0
     const underBetPlayerExists = this.underBetPlayers.length > 0
@@ -253,7 +261,42 @@ class Game extends RedisObject {
   private processTurn(): void {
     if (!this.isDoneBetting) {
       this.currentPosition = this.nextPosition(this.currentPosition)
+      return
     }
+    this.collectBets()
+  }
+
+  private collectBets(): void {
+    const allInPlayers = this.allInPlayers
+
+    if (allInPlayers.length > 0) {
+      const sortedAllInPlayers = _.sortBy(allInPlayers, ['currentBet'])
+
+      sortedAllInPlayers.forEach(allInPlayer => {
+        const allInValue = allInPlayer.currentBet
+        this.currentPot.value += allInValue
+        allInPlayer.currentBet = 0
+
+        this.players.forEach(p => {
+          if(p.currentBet < allInValue) {
+            this.currentPot.value += p.currentBet
+            p.currentBet = 0
+          } else {
+            this.currentPot.value += allInValue
+            p.currentBet = p.currentBet - allInValue
+          }
+        })
+
+        const excludedPlayerIds = _.cloneDeep(this.currentPot.excludedPlayerIds) || []
+        excludedPlayerIds.push(this.playerId(allInPlayer))
+        this.pots.push({ value: 0, excludedPlayerIds: excludedPlayerIds })
+      })
+    }
+
+    this.players.forEach(p => {
+      this.currentPot.value += p.currentBet
+      p.currentBet = 0
+    })
   }
 }
 
