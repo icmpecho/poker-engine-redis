@@ -541,6 +541,30 @@ describe('Game', function () {
           assert.equal(game.playerId(game.currentPlayer), 'bbb')
         })
       })
+
+      describe('#endOfRound', function () {
+        describe('All other players fold', function () {
+          beforeEach(function () {
+            game.raise('ddd', 5)
+            game.raise('aaa', 10)
+            game.fold('bbb')
+            game.fold('ccc')
+            game.fold('ddd')
+          })
+
+          it('transfer all credits in pots to the winner', function () {
+            assert.equal(game.getPlayer('aaa').credits, 28)
+          })
+
+          it('empty pots', function () {
+            assert.deepEqual(game.pots, [{ value: 0 }])
+          })
+
+          it('set game state to endOfRound', function () {
+            assert.equal(game.state, 'endOfRound')
+          })
+        })
+      })
     })
   })
 

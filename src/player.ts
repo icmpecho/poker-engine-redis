@@ -39,6 +39,10 @@ class Player extends RedisObject {
     return this._state == State.allin
   }
 
+  get isIn(): boolean {
+    return this._state != State.fold
+  }
+
   get state(): string {
     return State[this._state]
   }

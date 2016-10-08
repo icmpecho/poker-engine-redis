@@ -78,6 +78,10 @@ class Game extends RedisObject {
     return this.players.filter(x => x.isAllIn)
   }
 
+  get eligablePlayers(): Player[] {
+    return this.players.filter(x => x.isIn)
+  }
+
   get currentPot(): Pot {
     return this.pots[this.pots.length - 1]
   }
@@ -299,7 +303,17 @@ class Game extends RedisObject {
   }
 
   private endRound(): void {
-
+    const eligablePlayers = this.eligablePlayers
+    if (eligablePlayers.length == 1) {
+      const winner = eligablePlayers[0]
+      this.pots.forEach(p => {
+        winner.credits += p.value
+      })
+    } else {
+      // Show down
+    }
+    this.pots = [{ value: 0 }]
+    this._state = State.endOfRound
   }
 
   private collectBets(): void {
