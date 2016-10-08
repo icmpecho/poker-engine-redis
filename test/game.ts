@@ -536,6 +536,10 @@ describe('Game', function () {
         it('deal 3 cards to sharedCards in theFlop', function () {
           assert.lengthOf(game.sharedCards.cards, 3)
         })
+
+        it('set currentPlayer to the one next to button', function () {
+          assert.equal(game.playerId(game.currentPlayer), 'bbb')
+        })
       })
     })
   })

@@ -273,7 +273,7 @@ class Game extends RedisObject {
   private endBettingRound(): void {
     this.collectBets()
     if (!this.isEnoughActivePlayers || this._state == State.theRiver) {
-      // endRound
+      this.endRound()
       return
     }
     this.newBettingRound()
@@ -295,6 +295,11 @@ class Game extends RedisObject {
         throw new Error(`invalid state for newBettingRound: ${this.state}`)
     }
     this.players.forEach(p => p.newBettingRound())
+    this.currentPosition = this.nextPosition(this.buttonPosition)
+  }
+
+  private endRound(): void {
+
   }
 
   private collectBets(): void {
