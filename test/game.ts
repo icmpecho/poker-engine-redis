@@ -564,6 +564,16 @@ describe('Game', function () {
             assert.equal(game.state, 'endOfRound')
           })
         })
+
+        describe('All other players has no credits', function () {
+          beforeEach(function () {
+            _.times(4, () => game.allIn(game.playerId(game.currentPlayer)))
+          })
+
+          it('set game state to end instead', function () {
+            assert.equal(game.state, 'end')
+          })
+        })
       })
     })
   })
