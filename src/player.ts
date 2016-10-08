@@ -1,3 +1,4 @@
+import * as Bluebird from 'bluebird'
 import { RedisClient } from 'redis'
 import { RedisObject } from './redis-object'
 import { Pile } from './pile'
@@ -60,19 +61,23 @@ class Player extends RedisObject {
   }
 
   async load() {
-    await this.hand.load()
-    await this.loadProperty('credits', this.defaultCredits, parseInt)
-    await this.loadProperty('currentBet', 0, parseInt)
-    await this.loadProperty('position', this.defaultPosition, parseInt)
-    await this.loadProperty('_state', State.waiting, parseInt)
+    await Bluebird.all<any>([
+      this.hand.load(),
+      this.loadProperty('credits', this.defaultCredits, parseInt),
+      this.loadProperty('currentBet', 0, parseInt),
+      this.loadProperty('position', this.defaultPosition, parseInt),
+      this.loadProperty('_state', State.waiting, parseInt),
+    ])
   }
 
   async save() {
-    await this.hand.save()
-    await this.saveProperty('credits')
-    await this.saveProperty('currentBet')
-    await this.saveProperty('position')
-    await this.saveProperty('_state')
+    await Bluebird.all<any>([
+      this.hand.save(),
+      this.saveProperty('credits'),
+      this.saveProperty('currentBet'),
+      this.saveProperty('position'),
+      this.saveProperty('_state'),
+    ])
   }
 }
 

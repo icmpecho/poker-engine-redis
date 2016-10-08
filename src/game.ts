@@ -178,25 +178,29 @@ class Game extends RedisObject {
   }
 
   async load() {
-    await this.deck.load()
-    await this.sharedCards.load()
-    await this.loadProperty('_state', State.idle, parseInt)
-    await this.loadPlayers()
-    await this.loadProperty('buttonPosition', null, JSON.parse)
-    await this.loadProperty('currentPosition', null, JSON.parse)
-    await this.loadProperty('defaultCredits', this.defaultCredits, parseInt)
-    await this.loadProperty('pots', [{ value: 0 }], JSON.parse)
+    await Bluebird.all<any>([
+      this.deck.load(),
+      this.sharedCards.load(),
+      this.loadProperty('_state', State.idle, parseInt),
+      this.loadPlayers(),
+      this.loadProperty('buttonPosition', null, JSON.parse),
+      this.loadProperty('currentPosition', null, JSON.parse),
+      this.loadProperty('defaultCredits', this.defaultCredits, parseInt),
+      this.loadProperty('pots', [{ value: 0 }], JSON.parse),
+    ])
   }
 
   async save() {
-    await this.deck.save()
-    await this.sharedCards.save()
-    await this.saveProperty('_state')
-    await Bluebird.map(this.players, p => p.save())
-    await this.saveProperty('buttonPosition')
-    await this.saveProperty('currentPosition')
-    await this.saveProperty('defaultCredits')
-    await this.saveProperty('pots')
+    await Bluebird.all<any>([
+      this.deck.save(),
+      this.sharedCards.save(),
+      this.saveProperty('_state'),
+      Bluebird.map(this.players, p => p.save()),
+      this.saveProperty('buttonPosition'),
+      this.saveProperty('currentPosition'),
+      this.saveProperty('defaultCredits'),
+      this.saveProperty('pots'),
+    ])
   }
 
   private async loadPlayers() {
