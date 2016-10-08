@@ -17,12 +17,18 @@ enum State {
   end
 }
 
+interface Pot {
+  value: number,
+  excludedPlayerIds?: string[],
+}
+
 class Game extends RedisObject {
   deck: Pile
   players: Player[]
   sharedCards: Pile
   buttonPosition: number
   currentPosition: number
+  pots: Pot[]
   private _state: State
   constructor(client: RedisClient, key: string, public defaultCredits = 20) {
     super(client, key)
@@ -179,6 +185,7 @@ class Game extends RedisObject {
     await this.loadProperty('buttonPosition', null, JSON.parse)
     await this.loadProperty('currentPosition', null, JSON.parse)
     await this.loadProperty('defaultCredits', this.defaultCredits, parseInt)
+    await this.loadProperty('pots', [{ value: 0 }], JSON.parse)
   }
 
   async save() {
@@ -189,6 +196,7 @@ class Game extends RedisObject {
     await this.saveProperty('buttonPosition')
     await this.saveProperty('currentPosition')
     await this.saveProperty('defaultCredits')
+    await this.saveProperty('pots')
   }
 
   private async loadPlayers() {

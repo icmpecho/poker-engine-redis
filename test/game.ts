@@ -56,6 +56,10 @@ describe('Game', function () {
           assert.equal(game.getPlayer('aaa').credits, 30)
         }()
       })
+
+      it('initialize pots', function () {
+        assert.deepEqual(game.pots, [{ value: 0 }])
+      })
     })
 
     describe('existing key', function () {
@@ -73,6 +77,7 @@ describe('Game', function () {
           await oldGame.addPlayer('aaa')
           await oldGame.addPlayer('bbb')
           oldGame.players[0].bet(10)
+          oldGame.pots = [{ value: 10 }, { value: 4, excludedPlayerIds: ['aaa'] }]
           await oldGame.save()
           game = new Game(client, 'existing-key')
           await game.load()
@@ -114,6 +119,12 @@ describe('Game', function () {
 
       it('load existing currentPosition', function () {
         assert.equal(game.currentPosition, 0)
+      })
+
+      it('load existing pots', function () {
+        assert.deepEqual(
+          game.pots, [{ value: 10 }, { value: 4, excludedPlayerIds: ['aaa'] }]
+        )
       })
     })
   })
