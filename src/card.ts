@@ -14,19 +14,23 @@ class Card {
   ]
 
   private suit: string
-  private value: string
+  private _value: string
 
   constructor(code: string) {
     this.suit = code[1]
-    this.value = code[0]
+    this._value = code[0]
+  }
+
+  get value(): number {
+    return _.indexOf(Card.Values, this._value) + 2
   }
 
   toString(): string {
-    return this.value + this._unicodeSuit(this.suit)
+    return this._value + this._unicodeSuit(this.suit)
   }
 
   toJSON(): string {
-    return this.value + this.suit
+    return this._value + this.suit
   }
 
   _unicodeSuit(suit: string): string {
