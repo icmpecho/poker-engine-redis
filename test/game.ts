@@ -1,3 +1,4 @@
+import * as _ from 'lodash'
 import { assert, client } from './helper'
 import { Game } from '../src/game'
 
@@ -461,11 +462,35 @@ describe('Game', function () {
         await game.addPlayer('bbb')
         await game.addPlayer('ccc')
         await game.addPlayer('ddd')
+        game.start()
       }()
     })
 
     it('return false if there still players in waiting state', function () {
       assert.isFalse(game.isDoneBetting)
+    })
+
+    it('return false if there is still player who has not match highest bet', function () {
+      _.times(2, () => game.call(game.playerId(game.currentPlayer)))
+      game.raise(game.playerId(game.currentPlayer), 5)
+      assert.isFalse(game.isDoneBetting)
+    })
+
+    it('return true if the underBetPlayer is already all-in', function () {
+      const player = game.getPlayer('aaa')
+      player.credits = 5
+      game.raise(game.playerId(game.currentPlayer), 10)
+      _.times(3, () => game.call(game.playerId(game.currentPlayer)))
+      assert.equal(game.highestBet, 10)
+      assert.equal(player.currentBet, 5)
+      assert.equal(player.credits, 0)
+      assert.equal(player.state, 'allin')
+      assert.isTrue(game.isDoneBetting)
+    })
+
+    it('return true otherwise', function () {
+      _.times(3, () => game.call(game.playerId(game.currentPlayer)))
+      assert.isTrue(game.isDoneBetting)
     })
   })
 })

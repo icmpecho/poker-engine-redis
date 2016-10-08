@@ -56,10 +56,22 @@ class Game extends RedisObject {
     return _.max(bets)
   }
 
+  get activePlayers(): Player[] {
+    return this.players.filter(x => x.isActive)
+  }
+
+  get waitingPlayers(): Player[] {
+    return this.players.filter(x => x.isWaiting)
+  }
+
+  get underBetPlayers(): Player[] {
+    return this.activePlayers.filter(x => x.currentBet < this.highestBet)
+  }
+
   get isDoneBetting(): boolean {
-    const waitingPlayerExists = this.players.filter(x => x.isWaiting).length > 0
-    if (waitingPlayerExists) return false
-    return true
+    const waitingPlayerExists = this.waitingPlayers.length > 0
+    const underBetPlayerExists = this.underBetPlayers.length > 0
+    return !(waitingPlayerExists || underBetPlayerExists)
   }
 
   init(): void {
