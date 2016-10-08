@@ -450,7 +450,7 @@ describe('Game', function () {
     })
   })
 
-  describe('#doneBetting', function () {
+  describe('#isDoneBetting', function () {
     let game: Game
     beforeEach(function () {
       return async function () {
@@ -465,7 +465,7 @@ describe('Game', function () {
     })
 
     it('return false if there still players in waiting state', function () {
-      assert.isFalse(game.doneBetting)
+      assert.isFalse(game.isDoneBetting)
     })
   })
 })

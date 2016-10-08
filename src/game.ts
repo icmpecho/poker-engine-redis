@@ -56,7 +56,7 @@ class Game extends RedisObject {
     return _.max(bets)
   }
 
-  get doneBetting(): boolean {
+  get isDoneBetting(): boolean {
     const waitingPlayerExists = this.players.filter(x => x.isWaiting).length > 0
     if (waitingPlayerExists) return false
     return true
