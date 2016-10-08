@@ -64,6 +64,11 @@ class Player extends RedisObject {
     this.hand.restoreDefault()
   }
 
+  newBettingRound(): void {
+    this.currentBet = 0
+    if (this._state == State.played) this._state = State.waiting
+  }
+
   async load() {
     await Bluebird.all<any>([
       this.hand.load(),

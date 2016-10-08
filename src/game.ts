@@ -88,6 +88,10 @@ class Game extends RedisObject {
     return !(waitingPlayerExists || underBetPlayerExists)
   }
 
+  get isEnoughActivePlayers(): boolean {
+    return this.activePlayers.length > 1
+  }
+
   init(): void {
     if (this._state != State.idle) {
       throw new Error(`Game ${this.key} is already in ${State[this._state]} state.`)
@@ -263,7 +267,34 @@ class Game extends RedisObject {
       this.currentPosition = this.nextPosition(this.currentPosition)
       return
     }
+    this.endBettingRound()
+  }
+
+  private endBettingRound(): void {
     this.collectBets()
+    if (!this.isEnoughActivePlayers || this._state == State.theRiver) {
+      // endRound
+      return
+    }
+    this.newBettingRound()
+  }
+
+  private newBettingRound(): void {
+    this._state += 1
+    switch (this._state) {
+      case State.theFlop:
+        this.dealCard(this.sharedCards, 3)
+        break;
+      case State.theTurn:
+        this.dealCard(this.sharedCards)
+        break;
+      case State.theRiver:
+        this.dealCard(this.sharedCards)
+        break;
+      default:
+        throw new Error(`invalid state for newBettingRound: ${this.state}`)
+    }
+    this.players.forEach(p => p.newBettingRound())
   }
 
   private collectBets(): void {

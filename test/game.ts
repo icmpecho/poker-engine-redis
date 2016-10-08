@@ -506,6 +506,37 @@ describe('Game', function () {
           })
         })
       })
+
+      describe('#newBettingRound', function () {
+        beforeEach(function () {
+          const playerA = game.getPlayer('aaa')
+          const playerD = game.getPlayer('ddd')
+          playerA.credits = 10
+          playerD.credits = 15
+          game.allIn('ddd')
+          game.allIn('aaa')
+          game.raise('bbb', 16)
+          game.call('ccc')
+        })
+
+        it('Change game state to the next state', function () {
+          assert.equal(game.state, 'theFlop')
+        })
+
+        it('Change all active players state back to waiting', function () {
+          game.activePlayers.forEach(p => {
+            assert.equal(p.state, 'waiting')
+          })
+        })
+
+        it('Does not touch all-in players', function () {
+          assert.lengthOf(game.allInPlayers, 2)
+        })
+
+        it('deal 3 cards to sharedCards in theFlop', function () {
+          assert.lengthOf(game.sharedCards.cards, 3)
+        })
+      })
     })
   })
 
@@ -535,17 +566,21 @@ describe('Game', function () {
     })
 
     it('return true if the underBetPlayer is already all-in', function () {
-      const player = game.getPlayer('aaa')
-      player.credits = 5
-      game.raise(game.playerId(game.currentPlayer), 10)
-      _.times(3, () => game.call(game.playerId(game.currentPlayer)))
-      assert.equal(player.credits, 0)
-      assert.equal(player.state, 'allin')
+      const playerA = game.getPlayer('aaa')
+      playerA.credits = 5
+      game.getPlayer('ddd').bet(10)
+      playerA.bet(5)
+      game.getPlayer('bbb').bet(9)
+      game.getPlayer('ccc').bet(8)
+      assert.equal(playerA.credits, 0)
+      assert.equal(playerA.state, 'allin')
       assert.isTrue(game.isDoneBetting)
     })
 
     it('return true otherwise', function () {
-      _.times(3, () => game.call(game.playerId(game.currentPlayer)))
+      game.getPlayer('ddd').bet(2)
+      game.getPlayer('aaa').bet(2)
+      game.getPlayer('bbb').bet(1)
       assert.isTrue(game.isDoneBetting)
     })
   })
