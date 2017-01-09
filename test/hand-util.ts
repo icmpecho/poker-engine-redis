@@ -2,7 +2,7 @@ import { assert } from './helper'
 import { Card } from '../src/card'
 import { handCombinations } from '../src/hand-util'
 
-describe.only('Hand Util', function () {
+describe('Hand Util', function () {
 
   describe('#handCombinations', function () {
     const cards = Card.all.slice(0, 7)

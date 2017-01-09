@@ -1,19 +1,6 @@
 import * as _ from 'lodash'
 import { Card } from './card'
 
-enum Type {
-  highCard,
-  onePair,
-  twoPair,
-  threeOfAKind,
-  straight,
-  flush,
-  fullHouse,
-  fourOfAKind,
-  straightFlush,
-  royalFlush,
-}
-
 function kCombinations(cards: Card[], k: number): Card[][] {
   if (k > cards.length || k <= 0) {
     return []
